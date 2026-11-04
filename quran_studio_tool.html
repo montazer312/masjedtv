@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دستیار استودیو و تولید صفحات قرآن - مسجد محمودیه</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Vazirmatn, sans-serif; }
+        body { background: #060b14; color: #dbe4ee; padding: 30px; display: flex; justify-content: center; }
+        .container { max-width: 1050px; width: 100%; display: flex; flex-direction: column; gap: 24px; }
+        .header-card {
+            background: linear-gradient(135deg, #0f1c30 0%, #080f1a 100%);
+            border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 16px; padding: 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .header-title { font-size: 20px; font-weight: 800; color: #f7e096; }
+        .step-card {
+            background: #0a1322; border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px;
+        }
+        .step-header { display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 700; color: #f7e096; }
+        .step-number {
+            width: 32px; height: 32px; border-radius: 50%; background: #d4af37; color: #060b14;
+            display: flex; align-items: center; justify-content: center; font-weight: 900;
+        }
+        .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        input[type="number"], input[type="text"] {
+            background: #050a12; border: 1px solid rgba(212, 175, 55, 0.4);
+            color: #f7e096; padding: 10px 14px; border-radius: 8px; font-size: 15px; outline: none;
+        }
+        button {
+            background: linear-gradient(135deg, #d4af37, #aa821e); color: #060b14;
+            border: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; cursor: pointer;
+        }
+        button.secondary { background: #16263d; color: #dbe4ee; border: 1px solid rgba(255,255,255,0.15); }
+        textarea {
+            width: 100%; min-height: 140px; background: #050a12;
+            border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px;
+            color: #d1deee; padding: 14px; font-size: 14px; line-height: 1.8;
+        }
+        .audio-player-box {
+            background: #050a12; border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 14px;
+        }
+        .live-timer-badge {
+            font-family: monospace; font-size: 26px; font-weight: 900; color: #22c55e;
+            background: #0b1626; padding: 6px 16px; border-radius: 8px;
+        }
+        .sync-target-card {
+            background: rgba(212, 175, 55, 0.08); border: 2px dashed #d4af37;
+            border-radius: 12px; padding: 16px;
+        }
+        .target-text { font-size: 18px; font-weight: 800; color: #fde047; line-height: 1.8; }
+        .verses-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .verses-table th, .verses-table td {
+            border: 1px solid rgba(255, 255, 255, 0.08); padding: 10px 14px; text-align: right; font-size: 13px;
+        }
+        .verses-table th { background: #0f1c30; color: #f7e096; }
+        .verses-table tr.current-marking { background: rgba(212, 175, 55, 0.22) !important; outline: 2px solid #d4af37; }
+        .surah-tag { background: rgba(212, 175, 55, 0.15); color: #f7e096; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+        .table-time-input {
+            width: 75px; background: #14243b; border: 1px solid #d4af37; color: #4ade80;
+            font-family: monospace; font-size: 14px; font-weight: bold; padding: 4px; border-radius: 6px; text-align: center;
+        }
+        .notification {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #22c55e; color: #050a12; font-weight: 800; padding: 10px 24px;
+            border-radius: 30px; display: none; z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="notification">پیام</div>
+
+    <div class="container">
+        <header class="header-card">
+            <div>
+                <h1 class="header-title">دستیار استودیو و تولید صفحات قرآن</h1>
+                <p style="font-size: 13px; color: #8da4be; margin-top: 4px;">با احتساب «به نام خداوند بخشنده بخشایشگر» به عنوان آیه ۱ تمام صفحات</p>
+            </div>
+            <div style="color: #f7e096; font-size: 14px; font-weight: bold;">مسجد محمودیه</div>
+        </header>
+
+        <!-- گام اول -->
+        <section class="step-card">
+            <div class="step-header"><div class="step-number">۱</div><h2>انتخاب شماره صفحه قرآن</h2></div>
+            <div class="row">
+                <label>شماره صفحه (۱ تا ۶۰۴):</label>
+                <input type="number" id="input-page" min="1" max="604" value="1" style="width: 80px;">
+                <button onclick="fetchQuranPage()">دریافت آیات صفحه</button>
+                <span id="loading-status" style="font-size: 12px; color: #8da4be;"></span>
+            </div>
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <label style="font-size: 13px; color: #8da4be;">متن ترجمه آیات این صفحه (آیه ۱ همیشه بسم‌الله است):</label>
+                    <button class="secondary" onclick="copyTranslationOnly()">📋 کپی متن ترجمه</button>
+                </div>
+                <textarea id="raw-translation"></textarea>
+            </div>
+        </section>
+
+        <!-- گام دوم -->
+        <section class="step-card">
+            <div class="step-header"><div class="step-number">۲</div><h2>پرامپت آماده برای Google AI Studio</h2></div>
+            <textarea id="ai-prompt-box" readonly style="min-height: 120px;"></textarea>
+            <div class="row"><button onclick="copyFullAIPrompt()">📋 کپی پرامپت برای AI Studio</button></div>
+        </section>
+
+        <!-- گام سوم -->
+        <section class="step-card">
+            <div class="step-header"><div class="step-number">۳</div><h2>همگام‌سازی صوت صفحه</h2></div>
+            <div class="row">
+                <label>انتخاب فایل صوتی خروجی هوش مصنوعی (.wav):</label>
+                <input type="file" id="audio-file-input" accept="audio/*, .wav">
+            </div>
+
+            <div class="audio-player-box" id="player-box" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div><span style="font-size: 13px; color: #8da4be;">زمان پخش:</span> <div class="live-timer-badge" id="live-timer-display">00:00.0</div></div>
+                </div>
+                <audio id="sync-player" controls style="width: 100%;"></audio>
+
+                <div class="sync-target-card">
+                    <div style="font-size: 13px; color: #8da4be;">
+                        گوینده در حال خواندن این آیه است؛ <b>به محض تمام شدن این آیه، کلید Space را بزنید:</b>
+                    </div>
+                    <div class="target-text" id="target-ayah-text">در حال بارگذاری...</div>
+                </div>
+
+                <div class="row">
+                    <button id="mark-btn" style="background:#22c55e; color:#060b14; padding: 14px 26px; font-size: 16px; font-weight: 800;" onclick="finishCurrentVerseAndNext()">
+                        ⏱️ پایان این آیه و رفتن به آیه بعد (کلید Space)
+                    </button>
+                    <button class="secondary" onclick="resetTimings()">ریست کامل زمان‌ها</button>
+                </div>
+            </div>
+
+            <table class="verses-table">
+                <thead>
+                    <tr>
+                        <th style="width: 150px;">سوره و آیه</th>
+                        <th>متن ترجمه</th>
+                        <th style="width: 120px;">زمان شروع (ثانیه)</th>
+                    </tr>
+                </thead>
+                <tbody id="verses-tbody"></tbody>
+            </table>
+
+            <div class="row" style="margin-top: 10px; justify-content: flex-end;">
+                <button style="padding: 14px 28px; font-size: 15px;" onclick="downloadPageFile()">
+                    💾 دانلود فایل نهایی (page<span id="download-page-num">1</span>.js)
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let currentVerses = [];
+        let activeIdx = 0; // از آیه ۱ (بسم‌الله) شروع می‌شود
+        const player = document.getElementById('sync-player');
+        const timerDisplay = document.getElementById('live-timer-display');
+        const markBtn = document.getElementById('mark-btn');
+        const targetText = document.getElementById('target-ayah-text');
+
+        async function fetchQuranPage() {
+            const pageNum = document.getElementById('input-page').value;
+            const status = document.getElementById('loading-status');
+            status.innerText = "در حال دریافت اطلاعات صفحه...";
+
+            try {
+                const [resAr, resFa] = await Promise.all([
+                    fetch(`https://api.alquran.cloud/v1/page/${pageNum}/quran-uthmani`),
+                    fetch(`https://api.alquran.cloud/v1/page/${pageNum}/fa.makarem`)
+                ]);
+
+                const dataAr = await resAr.json();
+                const dataFa = await resFa.json();
+
+                if (dataAr.code === 200 && dataFa.code === 200) {
+                    const arList = dataAr.data.ayahs;
+                    const faList = dataFa.data.ayahs;
+                    currentVerses = [];
+
+                    const surahName = arList[0].surah.name.replace('سُورَةُ ', '');
+
+                    // آیه ۱ همیشه بسم‌الله است
+                    currentVerses.push({
+                        id: 1,
+                        ayahNumber: "۱",
+                        surahName: surahName,
+                        startTime: 0,
+                        arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+                        translation: "به نام خداوند بخشنده بخشایشگر."
+                    });
+
+                    let fullTextForAI = `به نام خداوند بخشنده بخشایشگر.\n`;
+
+                    for (let i = 0; i < arList.length; i++) {
+                        if (pageNum == 1 && i === 0) continue; // در سوره حمد تکرار نشود
+
+                        const realAyahNumber = arList[i].numberInSurah;
+                        const sName = arList[i].surah.name.replace('سُورَةُ ', '');
+
+                        currentVerses.push({
+                            id: currentVerses.length + 1,
+                            ayahNumber: realAyahNumber,
+                            surahName: sName,
+                            startTime: 0,
+                            arabic: arList[i].text,
+                            translation: faList[i].text.trim()
+                        });
+                        fullTextForAI += `سوره ${sName} - آیه ${realAyahNumber}: ${faList[i].text.trim()}\n`;
+                    }
+
+                    document.getElementById('raw-translation').value = fullTextForAI;
+                    document.getElementById('download-page-num').innerText = pageNum;
+                    updateAIPromptBox(pageNum, surahName, fullTextForAI);
+                    renderVersesTable();
+                    status.innerText = `صفحه ${pageNum} آماده شد (شامل ${currentVerses.length} آیه با احتساب آیه ۱ بسم‌الله).`;
+                }
+            } catch (err) { status.innerText = "خطا در اتصال به اینترنت."; }
+        }
+
+        function updateAIPromptBox(pageNum, surahName, text) {
+            document.getElementById('ai-prompt-box').value = `شما یک گوینده مذهبی رسمی، پخته و مسلط هستید. متن زیر ترجمه فارسی صفحه ${pageNum} قرآن کریم (${surahName}) است.
+لطفاً این متن را به صورت پیوسته، با آرامش، شمرده و بدون عجله با لحن معنوی استودیویی بخوانید. بین هر آیه ۲ ثانیه مکث کامل لحاظ فرمایید. عبارت "سوره ... آیه ..." را نخوانید و صرفاً خود ترجمه آیات را قرائت فرمایید:
+
+${text}`;
+        }
+
+        function renderVersesTable() {
+            const tbody = document.getElementById('verses-tbody');
+            tbody.innerHTML = '';
+            activeIdx = 0;
+
+            currentVerses.forEach((v, idx) => {
+                const tr = document.createElement('tr');
+                tr.id = `v-row-${idx}`;
+                if (idx === 0) tr.classList.add('current-marking');
+
+                tr.innerHTML = `
+                    <td><span class="surah-tag">${v.surahName}</span> آیه <b>${v.ayahNumber}</b></td>
+                    <td>${v.translation}</td>
+                    <td>
+                        <input type="number" step="0.1" class="table-time-input" id="time-input-${idx}" 
+                               value="${v.startTime}" onchange="currentVerses[${idx}].startTime = parseFloat(this.value) || 0;">s
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateUI();
+        }
+
+        document.getElementById('audio-file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                player.src = URL.createObjectURL(file);
+                player.load();
+                document.getElementById('player-box').style.display = 'flex';
+                activeIdx = 0;
+                updateUI();
+                showToast("فایل صوتی بارگذاری شد. دکمه Play را بزنید.");
+            }
+        });
+
+        player.addEventListener('timeupdate', () => {
+            const current = player.currentTime;
+            const mins = Math.floor(current / 60);
+            const secs = Math.floor(current % 60);
+            const tenths = Math.floor((current % 1) * 10);
+            timerDisplay.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${tenths}`;
+        });
+
+        // کاربر هر بار Space می‌زند یعنی آیه فعلی تمام شد و آیه بعدی شروع می‌شود
+        function finishCurrentVerseAndNext() {
+            if (!player.src) return;
+
+            if (player.paused && player.currentTime === 0) {
+                player.play();
+                showToast("پخش صدا شروع شد. آیه اول در حال خواندن است...");
+                return;
+            }
+
+            const timeNow = parseFloat(player.currentTime.toFixed(1));
+
+            // رفتن به آیه بعد
+            activeIdx++;
+
+            if (activeIdx < currentVerses.length) {
+                currentVerses[activeIdx].startTime = timeNow;
+                document.getElementById(`time-input-${activeIdx}`).value = timeNow;
+                updateUI();
+            } else {
+                showToast("تمام آیات با موفقیت ثبت شدند!");
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            document.querySelectorAll('.verses-table tr').forEach(r => r.classList.remove('current-marking'));
+            const targetRow = document.getElementById(`v-row-${activeIdx}`);
+            if (targetRow) {
+                targetRow.classList.add('current-marking');
+                targetRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            if (activeIdx < currentVerses.length) {
+                const item = currentVerses[activeIdx];
+                targetText.innerText = `« ${item.translation} »`;
+                markBtn.innerText = `⏱️ پایان این آیه و رفتن به آیه بعد (کلید Space)`;
+                markBtn.disabled = false;
+            } else {
+                targetText.innerText = `✅ تمام آیات این صفحه کامل شدند! دکمه دانلود را بزنید.`;
+                markBtn.innerText = `✅ پایان آیات صفحه`;
+                markBtn.disabled = true;
+            }
+        }
+
+        window.addEventListener('keydown', function(e) {
+            if (e.code === 'Space') {
+                if (document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
+                    e.preventDefault();
+                    finishCurrentVerseAndNext();
+                }
+            }
+        });
+
+        function resetTimings() {
+            activeIdx = 0;
+            currentVerses.forEach((v, idx) => {
+                v.startTime = 0;
+                const el = document.getElementById(`time-input-${idx}`);
+                if (el) el.value = 0;
+            });
+            updateUI();
+            player.currentTime = 0;
+            player.pause();
+        }
+
+        function downloadPageFile() {
+            const pageNum = document.getElementById('input-page').value;
+            const surahTitle = currentVerses.length > 0 ? `سوره مبارکه ${currentVerses[0].surahName}` : `صفحه ${pageNum}`;
+            currentVerses[0].startTime = 0;
+
+            const outputData = {
+                pageNumber: parseInt(pageNum, 10),
+                surahTitle: surahTitle,
+                audioSrc: `Quran/audio/page${pageNum}.wav`,
+                verses: currentVerses
+            };
+
+            const jsContent = `window.loadQuranData(${JSON.stringify(outputData, null, 2)});`;
+            const blob = new Blob([jsContent], { type: "application/javascript;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `page${pageNum}.js`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+        function copyTranslationOnly() { navigator.clipboard.writeText(document.getElementById('raw-translation').value).then(() => showToast("کپی شد!")); }
+        function copyFullAIPrompt() { navigator.clipboard.writeText(document.getElementById('ai-prompt-box').value).then(() => showToast("کپی شد!")); }
+
+        window.addEventListener('DOMContentLoaded', () => { fetchQuranPage(); });
+    </script>
+</body>
+</html>

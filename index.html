@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تلویزیون مسجد محمودیه</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+        body {
+            background-color: #050a12; color: #ffffff; font-family: Vazirmatn, sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            width: 100vw; height: 100vh; overflow: hidden;
+        }
+        #rotate-warning {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #070e1a; z-index: 9999; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center; padding: 24px;
+        }
+        #rotate-warning svg { width: 60px; height: 60px; fill: #d4af37; margin-bottom: 20px; }
+        @media (orientation: portrait) {
+            #rotate-warning { display: flex; }
+            #stage { display: none !important; }
+        }
+        #stage {
+            width: 100vw; height: 56.25vw; max-height: 100vh; max-width: 177.78vh;
+            position: relative; background: radial-gradient(circle at center, #0c1626 0%, #060b14 100%);
+            border: 1px solid rgba(212, 175, 55, 0.35); box-shadow: 0 0 60px rgba(0, 0, 0, 0.95);
+            overflow: hidden;
+        }
+        .content-area { width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: #060b14; cursor: pointer; }
+        
+        /* منوی شیشه‌ای بالا */
+        header {
+            position: absolute; top: 0; left: 0; width: 100%; height: 54px;
+            background: rgba(6, 12, 22, 0.38);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+        }
+        header.menu-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+        
+        .brand-container { display: flex; align-items: center; gap: 10px; opacity: 0.85; }
+        .gold-accent { width: 3px; height: 20px; background: #d4af37; border-radius: 2px; }
+        .brand-title { font-size: 15px; font-weight: 700; color: #f7e096; }
+        
+        .nav-group { display: flex; align-items: center; gap: 8px; }
+        .nav-divider { width: 1px; height: 20px; background: rgba(212, 175, 55, 0.2); margin: 0 2px; }
+        
+        .nav-btn {
+            background: rgba(14, 25, 42, 0.45);
+            color: #d1deee;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            backdrop-filter: blur(8px);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 12.5px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .nav-btn:hover {
+            background: rgba(22, 40, 68, 0.65);
+            border-color: rgba(212, 175, 55, 0.5);
+            color: #ffffff;
+        }
+        .nav-btn.active {
+            background: rgba(212, 175, 55, 0.75);
+            color: #060b14;
+            font-weight: 800;
+            border-color: #f7e096;
+            box-shadow: 0 0 14px rgba(212, 175, 55, 0.4);
+        }
+        .nav-btn.small { padding: 4px 10px; font-size: 11px; }
+        
+        .fullscreen-btn {
+            background: rgba(14, 25, 42, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            color: #f7e096; border-radius: 6px; padding: 5px 12px; cursor: pointer; font-size: 11px;
+            backdrop-filter: blur(8px);
+        }
+
+        .screen-view {
+            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
+            opacity: 0; visibility: hidden; transition: opacity 0.45s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .screen-view.active { opacity: 1; visibility: visible; }
+        .full-img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        
+        .hadith-stage { width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: center; }
+        .hadith-img-slide { width: 100%; height: 100%; object-fit: contain; }
+        
+        .floating-bottom-bar {
+            position: absolute; bottom: 20px; display: flex; align-items: center; gap: 12px;
+            background: rgba(6, 12, 22, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 7px 18px; border-radius: 30px;
+            z-index: 10; transition: transform 0.4s ease, opacity 0.35s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        .floating-bottom-bar.controls-hidden { transform: translateY(120px); opacity: 0; pointer-events: none; }
+        .page-input-box {
+            width: 48px; background: rgba(9, 18, 31, 0.6); border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 6px; color: #f7e096; text-align: center; padding: 3px; outline: none; font-size: 13px;
+        }
+        .arrow-btn {
+            background: rgba(20, 36, 59, 0.5); color: #f7e096; border: 1px solid rgba(212, 175, 55, 0.3);
+            width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; font-size: 15px;
+        }
+
+        .quran-fullscreen-layout {
+            width: 100%; height: 100%; display: flex; flex-direction: column;
+            padding: 65px 60px 60px 60px; position: relative;
+        }
+        .quran-header-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.25); padding-bottom: 10px; margin-bottom: 14px;
+        }
+        .quran-surah-tag { font-size: 16px; font-weight: 800; color: #f7e096; }
+        .quran-page-tag {
+            font-size: 13px; color: #8da4be; background: rgba(14, 26, 45, 0.5);
+            padding: 3px 12px; border-radius: 20px; border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .verses-stream-container {
+            flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;
+            padding-right: 8px; scrollbar-width: none;
+        }
+        .verses-stream-container::-webkit-scrollbar { display: none; }
+        .verse-card {
+            background: rgba(10, 18, 31, 0.55); border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px; padding: 16px 24px; transition: all 0.3s ease; opacity: 0.45;
+        }
+        .verse-card.active-verse {
+            opacity: 1; background: radial-gradient(circle at right, rgba(19, 36, 61, 0.85) 0%, rgba(10, 20, 36, 0.9) 100%);
+            border: 2px solid #d4af37; box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
+        }
+        .arabic-mini-text { font-size: 13px; color: #a4b4c7; margin-bottom: 6px; display: block; }
+        .verse-card.active-verse .arabic-mini-text { color: #f7e096; }
+        .persian-main-translation { font-size: 24px; line-height: 2.1; color: #dbe4ee; font-weight: 500; }
+        .verse-card.active-verse .persian-main-translation { color: #ffffff; font-weight: 700; }
+
+        /* پاپ‌آپ پایان صفحه (صدق الله العلی العظیم) */
+        #sadaqallah-modal {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(4, 8, 15, 0.88); backdrop-filter: blur(16px); display: none;
+            flex-direction: column; align-items: center; justify-content: center; z-index: 500;
+        }
+        .sadaq-box {
+            border: 2px solid #d4af37; background: radial-gradient(circle, #101c30 0%, #070e1a 100%);
+            padding: 45px 70px; border-radius: 24px; text-align: center;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+        }
+        .sadaq-arabic { font-size: 38px; font-weight: 900; color: #f7e096; margin-bottom: 14px; }
+        .sadaq-farsi { font-size: 22px; color: #ffffff; margin-bottom: 24px; }
+    </style>
+</head>
+<body>
+
+    <div id="rotate-warning">
+        <svg viewBox="0 0 24 24"><path d="M16 1H8C6.34 1 5 2.34 5 4v16c0 1.66 1.34 3 3 3h8c1.66 0 3-1.34 3-3V4c0-1.66-1.34-3-3-3zm1 18H7V4h10v15z"/></svg>
+        <h2>لطفاً گوشی را به حالت افقی بچرخانید</h2>
+    </div>
+
+    <div id="stage">
+        <audio id="quran-audio-player" preload="auto"></audio>
+
+        <header id="main-header">
+            <div class="brand-container">
+                <div class="gold-accent"></div>
+                <div class="brand-title">تلویزیون مسجد محمودیه</div>
+            </div>
+            
+            <div class="nav-group">
+                <button id="btn-namaz1" class="nav-btn active" onclick="switchSection('namaz1')">نماز اول</button>
+                <button id="btn-namaz2" class="nav-btn" onclick="switchSection('namaz2')">نماز دوم</button>
+                <div class="nav-divider"></div>
+                <button id="btn-hadith" class="nav-btn" onclick="switchSection('hadith')">احادیث بین دو نماز</button>
+                <button id="btn-quran" class="nav-btn" onclick="switchSection('quran')">تلاوت قرآن</button>
+            </div>
+
+            <button class="fullscreen-btn" onclick="toggleFullScreen()">تمام‌صفحه</button>
+        </header>
+
+        <div class="content-area" id="touch-surface">
+            <div id="view-namaz1" class="screen-view active">
+                <img class="full-img" src="Namaz/namaz1.jpg" alt="نماز اول" onerror="this.style.opacity='0'">
+            </div>
+            <div id="view-namaz2" class="screen-view">
+                <img class="full-img" src="Namaz/namaz2.jpg" alt="نماز دوم" onerror="this.style.opacity='0'">
+            </div>
+            <div id="view-hadith" class="screen-view">
+                <div class="hadith-stage">
+                    <img id="hadith-slide" class="hadith-img-slide" src="Hadith/hadith1.jpg" alt="حدیث">
+                    <div class="floating-bottom-bar" id="hadith-nav-controls">
+                        <button class="arrow-btn" onclick="prevSlide(event)">‹</button>
+                        <span id="slide-number" style="color:#d1deee; font-size:13px; min-width:85px; text-align:center;">حدیث ۱</span>
+                        <button class="arrow-btn" onclick="nextSlide(event)">›</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش تلاوت قرآن -->
+            <div id="view-quran" class="screen-view">
+                <div class="quran-fullscreen-layout">
+                    <div class="quran-header-bar">
+                        <div class="quran-surah-tag"><span id="quran-surah-title">در حال بارگذاری...</span></div>
+                        <div class="quran-page-tag" id="quran-page-title">صفحه ۱ قرآن کریم</div>
+                    </div>
+                    <div class="verses-stream-container" id="verses-stream"></div>
+                </div>
+
+                <div class="floating-bottom-bar" id="quran-player-bar">
+                    <div style="display:flex; align-items:center; gap:6px;" onclick="event.stopPropagation()">
+                        <label for="page-number-input" style="font-size:12px; color:#d1deee;">صفحه:</label>
+                        <input type="number" id="page-number-input" class="page-input-box" min="1" max="604" value="1">
+                        <button class="nav-btn small" onclick="handlePageChange(event)">برو</button>
+                    </div>
+
+                    <button class="nav-btn active" id="play-pause-btn" onclick="togglePlayQuran(event)">ترجمه آیات</button>
+                    <button class="arrow-btn" onclick="jumpVerse(-1, event)">‹</button>
+                    <span id="verse-indicator-label" style="color:#d1deee; font-size:13px; min-width:75px; text-align:center;">آیه ۱</span>
+                    <button class="arrow-btn" onclick="jumpVerse(1, event)">›</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- پاپ‌آپ پایان تلاوت -->
+        <div id="sadaqallah-modal">
+            <div class="sadaq-box">
+                <div class="sadaq-arabic">صَدَقَ اللهُ العَلِیُّ العَظیم</div>
+                <div class="sadaq-farsi">راست گفت خداوند بلندمرتبه و بزرگ</div>
+                <div style="margin-top: 20px;"><button class="nav-btn" onclick="closeSadaqallahModal()">بستن و بازگشت</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const header = document.getElementById('main-header');
+        const touchSurface = document.getElementById('touch-surface');
+        const hadithControls = document.getElementById('hadith-nav-controls');
+        const quranControls = document.getElementById('quran-player-bar');
+        const audioPlayer = document.getElementById('quran-audio-player');
+        const playBtn = document.getElementById('play-pause-btn');
+
+        touchSurface.addEventListener('click', (e) => {
+            if (e.target.closest('#hadith-nav-controls') || e.target.closest('#quran-player-bar') || e.target.closest('#main-header') || e.target.closest('#sadaqallah-modal')) return;
+            header.classList.toggle('menu-hidden');
+            if (hadithControls) hadithControls.classList.toggle('controls-hidden');
+            if (quranControls) quranControls.classList.toggle('controls-hidden');
+        });
+
+        function switchSection(targetId) {
+            document.querySelectorAll('.screen-view').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            const targetView = document.getElementById('view-' + targetId);
+            if (targetView) targetView.classList.add('active');
+            const targetBtn = document.getElementById('btn-' + targetId);
+            if (targetBtn) targetBtn.classList.add('active');
+            if (targetId !== 'quran') pauseQuran();
+        }
+
+        const hadithImages = ["Hadith/hadith1.jpg", "Hadith/hadith2.jpg", "Hadith/hadith3.jpg"];
+        let currentSlideIdx = 0;
+        function nextSlide(e) { if (e) e.stopPropagation(); currentSlideIdx = (currentSlideIdx + 1) % hadithImages.length; document.getElementById('hadith-slide').src = hadithImages[currentSlideIdx]; }
+        function prevSlide(e) { if (e) e.stopPropagation(); currentSlideIdx = (currentSlideIdx - 1 + hadithImages.length) % hadithImages.length; document.getElementById('hadith-slide').src = hadithImages[currentSlideIdx]; }
+
+        let currentQuranData = null;
+        let currentVerseIndex = 0;
+        let isPlayingQuran = false;
+
+        function handlePageChange(e) {
+            if (e) e.stopPropagation();
+            const inputVal = parseInt(document.getElementById('page-number-input').value, 10);
+            if (!isNaN(inputVal) && inputVal >= 1 && inputVal <= 604) loadPageNumber(inputVal);
+        }
+
+        function loadPageNumber(pageNum) {
+            pauseQuran();
+            currentVerseIndex = 0;
+            document.getElementById('page-number-input').value = pageNum;
+
+            const oldScript = document.getElementById('dynamic-page-script');
+            if (oldScript) oldScript.remove();
+
+            window.loadQuranData = function(data) {
+                currentQuranData = data;
+                renderQuranPage(currentQuranData);
+            };
+
+            const script = document.createElement('script');
+            script.id = 'dynamic-page-script';
+            script.src = `Quran/pages/page${pageNum}.js?v=${Date.now()}`;
+            script.onerror = function() {
+                alert(`فایل Quran/pages/page${pageNum}.js پیدا نشد!`);
+            };
+            document.body.appendChild(script);
+        }
+
+        function renderQuranPage(data) {
+            document.getElementById('quran-surah-title').innerText = data.surahTitle;
+            document.getElementById('quran-page-title').innerText = `صفحه ${data.pageNumber} قرآن کریم`;
+            const container = document.getElementById('verses-stream');
+            container.innerHTML = '';
+
+            data.verses.forEach((v, index) => {
+                const card = document.createElement('div');
+                card.className = 'verse-card';
+                card.id = `verse-card-${index}`;
+                card.innerHTML = `
+                    <span class="arabic-mini-text">${v.arabic}</span>
+                    <div class="persian-main-translation">${v.translation}</div>
+                `;
+                container.appendChild(card);
+            });
+            updateVerseDisplay(0);
+        }
+
+        function updateVerseDisplay(index) {
+            document.querySelectorAll('.verse-card').forEach(el => el.classList.remove('active-verse'));
+            const activeCard = document.getElementById(`verse-card-${index}`);
+            if (activeCard) {
+                activeCard.classList.add('active-verse');
+                activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            if (currentQuranData && currentQuranData.verses[index]) {
+                document.getElementById('verse-indicator-label').innerText = `آیه ${currentQuranData.verses[index].ayahNumber}`;
+            }
+        }
+
+        function togglePlayQuran(e) {
+            if (e) e.stopPropagation();
+            if (isPlayingQuran) pauseQuran();
+            else startQuran();
+        }
+
+        function startQuran() {
+            if (!currentQuranData) return;
+            isPlayingQuran = true;
+            playBtn.innerText = "توقف ترجمه";
+
+            // اتصال رویداد پایان برای اتمام آیات صفحه
+            audioPlayer.onended = () => { triggerSadaqallah(); };
+
+            if (!audioPlayer.src.endsWith(currentQuranData.audioSrc)) {
+                audioPlayer.src = currentQuranData.audioSrc;
+            }
+            audioPlayer.play().catch(err => alert("فایل صوتی یافت نشد: " + currentQuranData.audioSrc));
+        }
+
+        function pauseQuran() {
+            isPlayingQuran = false;
+            playBtn.innerText = currentVerseIndex > 0 ? "ادامه ترجمه" : "ترجمه آیات";
+            audioPlayer.pause();
+        }
+
+        // هایلایت خطوط بر اساس ثانیه
+        audioPlayer.ontimeupdate = () => {
+            if (!isPlayingQuran || !currentQuranData || !currentQuranData.verses) return;
+            const currentTime = audioPlayer.currentTime;
+            const verses = currentQuranData.verses;
+
+            for (let i = verses.length - 1; i >= 0; i--) {
+                if (currentTime >= verses[i].startTime) {
+                    if (currentVerseIndex !== i) {
+                        currentVerseIndex = i;
+                        updateVerseDisplay(currentVerseIndex);
+                    }
+                    break;
+                }
+            }
+        };
+
+        function jumpVerse(direction, e) {
+            if (e) e.stopPropagation();
+            if (!currentQuranData) return;
+            currentVerseIndex = Math.max(0, Math.min(currentQuranData.verses.length - 1, currentVerseIndex + direction));
+            if (currentQuranData.verses[currentVerseIndex]) {
+                audioPlayer.currentTime = currentQuranData.verses[currentVerseIndex].startTime;
+            }
+            updateVerseDisplay(currentVerseIndex);
+        }
+
+        // پخش صدق الله فقط برای یک‌بار (بدون لوپ)
+        function triggerSadaqallah() {
+            pauseQuran();
+            currentVerseIndex = 0;
+            updateVerseDisplay(0);
+
+            // قطع رویداد قبلی برای جلوگیری از لوپ شدن بی‌پایان صدای صدق‌الله
+            audioPlayer.onended = null;
+
+            audioPlayer.src = "Quran/audio/sadaqallah.wav";
+            audioPlayer.play().catch(() => {});
+            document.getElementById('sadaqallah-modal').style.display = 'flex';
+
+            // پس از اتمام یک‌باره صدای صدق‌الله، ۳ ثانیه بعد خودکار بسته شود
+            audioPlayer.onended = () => {
+                setTimeout(() => {
+                    closeSadaqallahModal();
+                }, 3000);
+            };
+        }
+
+        function closeSadaqallahModal() {
+            document.getElementById('sadaqallah-modal').style.display = 'none';
+            playBtn.innerText = "ترجمه آیات";
+            audioPlayer.onended = null;
+            switchSection('namaz1');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => { loadPageNumber(1); });
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+            else if (document.exitFullscreen) document.exitFullscreen();
+        }
+    </script>
+</body>
+</html>
