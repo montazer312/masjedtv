@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=overlays-content">
+    <title>تلویزیون مسجد محمودیه</title>
+    
+    <!-- فونت‌های گوگل -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Scheherazade+New:wght@700&family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+        
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            background-color: #050a12;
+            color: #ffffff;
+            font-family: Vazirmatn, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #rotate-warning {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh;
+            background: #070e1a; z-index: 9999; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center; padding: 24px; gap: 16px;
+        }
+        #rotate-warning svg { width: 64px; height: 64px; fill: #d4af37; }
+        @media (orientation: portrait) {
+            #rotate-warning { display: flex; }
+            #stage { display: none !important; }
+        }
+
+        #stage {
+            width: 100vw; height: 56.25vw; max-height: 100vh; max-height: 100dvh; max-width: 177.78vh;
+            position: relative; background: radial-gradient(circle at center, #0c1626 0%, #060b14 100%);
+            border: 1px solid rgba(212, 175, 55, 0.35); box-shadow: 0 0 60px rgba(0, 0, 0, 0.95);
+            overflow: hidden;
+        }
+        .content-area { width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: #060b14; cursor: pointer; }
+
+        /* فوکوس درخشان کنترل تلویزیون */
+        button:focus, input:focus, .nav-btn:focus, .arrow-btn:focus, .hadith-side-arrow:focus {
+            outline: 3.5px solid #fde047 !important;
+            outline-offset: 2px !important;
+            box-shadow: 0 0 25px rgba(253, 224, 71, 0.95) !important;
+            transform: scale(1.1) !important;
+            z-index: 999 !important;
+            transition: all 0.15s ease !important;
+        }
+
+        /* منوی شیشه‌ای پایین */
+        nav#bottom-nav {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 50px;
+            background: rgba(6, 12, 22, 0.88);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(212, 175, 55, 0.35);
+            box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.7);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 16px; z-index: 100;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+        nav#bottom-nav.menu-hidden { transform: translateY(100%); opacity: 0; pointer-events: none; }
+
+        .brand-container { display: flex; align-items: center; gap: 8px; opacity: 0.9; }
+        .gold-accent { width: 3px; height: 18px; background: #d4af37; border-radius: 2px; }
+        .brand-title { font-size: 13px; font-weight: 700; color: #f7e096; white-space: nowrap; }
+
+        .nav-group { display: flex; align-items: center; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+        .nav-group::-webkit-scrollbar { display: none; }
+        
+        .nav-btn {
+            background: rgba(14, 25, 42, 0.7); color: #d1deee;
+            border: 1px solid rgba(212, 175, 55, 0.3); backdrop-filter: blur(8px);
+            padding: 5px 12px; border-radius: 8px; font-family: inherit; font-size: 12.5px;
+            cursor: pointer; transition: all 0.2s ease; white-space: nowrap; outline: none;
+        }
+        .nav-btn.active {
+            background: rgba(212, 175, 55, 0.9); color: #060b14; font-weight: 900;
+            border-color: #f7e096; box-shadow: 0 0 14px rgba(212, 175, 55, 0.5);
+        }
+        .nav-btn.small { padding: 4px 8px; font-size: 11px; }
+
+        .rotate-trigger-btn {
+            background: linear-gradient(135deg, #d4af37, #aa821e); color: #060b14;
+            border: none; padding: 8px 16px; border-radius: 20px; font-weight: 800;
+            font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+        }
+
+        .screen-view {
+            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
+            opacity: 0; visibility: hidden; transition: opacity 0.35s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .screen-view.active { opacity: 1; visibility: visible; }
+        .full-img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+        /* احادیث و دکمه‌های جهت‌نما در طرفین */
+        .hadith-stage {
+            width: 100%; height: 100%; position: relative; display: flex;
+            align-items: center; justify-content: center; touch-action: pan-y;
+        }
+        .hadith-img-slide { width: 100%; height: 100%; object-fit: contain; }
+
+        .hadith-side-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 52px; height: 52px; border-radius: 50%;
+            background: rgba(8, 16, 28, 0.65); border: 1.5px solid rgba(212, 175, 55, 0.45);
+            color: #fde047; font-size: 28px; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 20; transition: all 0.25s ease;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); outline: none;
+        }
+        .hadith-side-arrow:hover {
+            background: rgba(212, 175, 55, 0.9); color: #060b14;
+            transform: translateY(-50%) scale(1.15);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.7);
+        }
+        .hadith-side-arrow.right-arrow { right: 26px; }
+        .hadith-side-arrow.left-arrow { left: 26px; }
+
+        /* ========================================================
+           صحنه ثابت تله‌پروامپتر (قرآن و دعای فرج)
+        ======================================================== */
+        .quran-stage-layout {
+            width: 100%; height: 100%; display: flex; flex-direction: column;
+            padding: 16px 36px 115px 36px; position: relative;
+        }
+        .quran-header-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1.5px solid rgba(212, 175, 55, 0.3); padding-bottom: 6px; margin-bottom: 8px;
+        }
+        .quran-surah-tag { font-size: 16.5px; font-weight: 800; color: #f7e096; }
+        .quran-page-tag {
+            font-size: 13px; color: #8da4be; background: rgba(14, 26, 45, 0.6);
+            padding: 2px 10px; border-radius: 16px; border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .teleprompter-viewport {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            position: relative; width: 100%; overflow: hidden;
+        }
+
+        .fixed-center-frame {
+            width: 100%; max-width: 1150px;
+            min-height: 250px;
+            background: radial-gradient(circle at center, rgba(19, 36, 62, 0.94) 0%, rgba(9, 17, 30, 0.98) 100%);
+            border: 2px solid rgba(212, 175, 55, 0.55);
+            border-radius: 24px; padding: 24px 36px;
+            box-shadow: 0 0 55px rgba(0, 0, 0, 0.85), 0 0 35px rgba(212, 175, 55, 0.3);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; position: relative; overflow: hidden;
+        }
+
+        .verse-motion-wrapper {
+            width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+        }
+        .verse-motion-wrapper.slide-out-up {
+            transform: translateY(-45px) scale(0.96);
+            opacity: 0;
+        }
+        .verse-motion-wrapper.slide-in-up {
+            animation: slideInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(45px) scale(0.96); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .verse-stage-badge {
+            display: inline-block; font-size: 13.5px; font-weight: 800;
+            padding: 3px 14px; border-radius: 20px; margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        .badge-arabic-mode {
+            background: rgba(212, 175, 55, 0.25); color: #fde047; border: 1px solid rgba(212, 175, 55, 0.6);
+        }
+        .badge-trans-mode {
+            background: rgba(34, 197, 94, 0.25); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.6);
+        }
+
+        /* متن عربی قرآن */
+        .stage-arabic-text {
+            font-family: 'Scheherazade New', serif !important; font-weight: 700;
+            font-size: 38px; line-height: 1.85; color: #fde047;
+            text-shadow: 0 0 16px rgba(253, 224, 71, 0.3);
+            text-align: center; width: 100%;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .stage-arabic-text.elevated-mode {
+            font-size: 24px; line-height: 1.6; color: #94a3b8;
+            margin-bottom: 6px; text-shadow: none;
+        }
+
+        /* متن عربی فوق‌العاده بزرگ دعای فرج */
+        .faraj-arabic-large {
+            font-family: 'Scheherazade New', serif !important;
+            font-weight: 700 !important;
+            font-size: 48px !important;
+            line-height: 1.8 !important;
+            color: #fde047 !important;
+            text-shadow: 0 0 20px rgba(253, 224, 71, 0.35) !important;
+            text-align: center !important;
+            width: 100%;
+        }
+
+        /* ترجمه فارسی کوچک و هماهنگ دعای فرج */
+        .faraj-persian-small {
+            font-family: 'Lalezar', cursive, sans-serif !important;
+            font-size: 20px !important;
+            line-height: 1.6 !important;
+            color: #cbd5e1 !important;
+            text-shadow: none !important;
+            text-align: center !important;
+            width: 100%;
+            opacity: 0.9;
+        }
+
+        /* نماد نشان آیه عثمان طه فقط در قرآن */
+        .osman-ayah-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            position: relative; width: 44px; height: 44px; margin: 0 8px;
+            vertical-align: middle; user-select: none;
+        }
+        .osman-badge-svg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.65));
+        }
+        .osman-ayah-number {
+            position: relative; font-family: 'Vazirmatn', sans-serif;
+            font-weight: 900; font-size: 15px; color: #fde047; line-height: 1; z-index: 2;
+        }
+
+        /* لایه ترجمه */
+        .stage-translation-drawer {
+            width: 100%; overflow: hidden; max-height: 0; opacity: 0;
+            transform: translateY(30px);
+            transition: max-height 0.45s ease, opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.35s ease;
+        }
+        .stage-translation-drawer.active-open {
+            max-height: 350px; opacity: 1; transform: translateY(0);
+            margin-top: 12px; border-top: 1.5px dashed rgba(212, 175, 55, 0.35); padding-top: 10px;
+        }
+        .stage-persian-text {
+            font-family: 'Lalezar', cursive, sans-serif !important;
+            font-size: 34px; line-height: 1.8; color: #ffffff;
+            text-shadow: 0 0 14px rgba(255, 255, 255, 0.2);
+            text-align: center; width: 100%;
+        }
+
+        /* کنترلرهای شناور پایین */
+        .floating-bottom-bar {
+            position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(6, 12, 22, 0.88); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(212, 175, 55, 0.45); padding: 6px 18px; border-radius: 30px;
+            z-index: 10; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+        .floating-bottom-bar.controls-hidden { transform: translateX(-50%) translateY(140px); opacity: 0; pointer-events: none; }
+        
+        .floating-bottom-bar.input-focused-elevated {
+            position: fixed !important;
+            border-color: #fde047 !important;
+            background: rgba(7, 14, 27, 0.98) !important;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.95), 0 0 25px rgba(212, 175, 55, 0.8) !important;
+            z-index: 99999 !important;
+            padding: 5px 12px !important;
+        }
+        .floating-bottom-bar.input-focused-elevated #play-pause-btn,
+        .floating-bottom-bar.input-focused-elevated #btn-prev-verse,
+        .floating-bottom-bar.input-focused-elevated #btn-next-verse,
+        .floating-bottom-bar.input-focused-elevated #verse-indicator-label {
+            display: none !important;
+        }
+
+        .page-input-box {
+            width: 58px; height: 34px; background: rgba(9, 18, 31, 0.95);
+            border: 1.5px solid rgba(212, 175, 55, 0.6); border-radius: 6px;
+            color: #fde047; text-align: center; font-size: 16px; font-weight: 800; outline: none;
+        }
+        .page-input-box::selection { background: #d4af37; color: #060b14; }
+
+        .arrow-btn {
+            background: rgba(20, 36, 59, 0.6); color: #f7e096; border: 1px solid rgba(212, 175, 55, 0.3);
+            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; font-size: 14px; outline: none;
+        }
+
+        /* تعقیبات و غفیله */
+        .step-flow-container {
+            width: 100%; height: 100%; overflow: hidden;
+            padding: 8px 24px 58px 24px;
+            display: flex; flex-direction: column; justify-content: space-between; gap: 6px;
+        }
+        .compact-top-banner {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(15, 28, 48, 0.75) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 10px;
+            padding: 5px 16px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .compact-top-banner h2 { font-size: 15.5px; color: #fde047; font-weight: 800; }
+
+        .fullscreen-step-block {
+            flex: 1; min-height: 0;
+            background: linear-gradient(180deg, rgba(16, 28, 48, 0.92) 0%, rgba(8, 14, 25, 0.98) 100%);
+            border: 1.5px solid rgba(212, 175, 55, 0.45); border-radius: 12px;
+            padding: 6px 18px; display: flex; flex-direction: column; justify-content: space-around; gap: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .instruction-line-box {
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            padding: 5px 14px; border-radius: 8px;
+        }
+        .instruction-line-box.gold { background: rgba(212, 175, 55, 0.22); border-right: 5px solid #d4af37; color: #fde047; }
+        .instruction-line-box.blue { background: rgba(56, 189, 248, 0.22); border-right: 5px solid #38bdf8; color: #7dd3fc; }
+        .instruction-line-box.purple { background: rgba(168, 85, 247, 0.22); border-right: 5px solid #c084fc; color: #e9d5ff; }
+        .instruction-line-box.green { background: rgba(34, 197, 94, 0.24); border-right: 5px solid #22c55e; color: #4ade80; }
+
+        .step-badge-pill { font-size: 14.5px; font-weight: 900; padding: 2px 10px; border-radius: 6px; color: #060b14; white-space: nowrap; }
+        .step-badge-pill.gold { background: #d4af37; }
+        .step-badge-pill.blue { background: #38bdf8; }
+        .step-badge-pill.purple { background: #c084fc; }
+        .step-badge-pill.green { background: #22c55e; }
+
+        .instruction-text-main { flex: 1; font-size: 16px; font-weight: 800; line-height: 1.35; }
+        .instruction-action-tag { font-size: 14px; font-weight: 800; opacity: 0.95; white-space: nowrap; }
+
+        .flow-arabic-text {
+            font-family: 'Scheherazade New', serif; font-weight: 700;
+            font-size: 27px; line-height: 1.6; color: #ffffff; text-align: justify;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.15); padding: 0 4px;
+        }
+        .count-badge-inline {
+            background: rgba(212, 175, 55, 0.25); border: 1px solid #d4af37;
+            color: #fde047; padding: 1px 8px; border-radius: 5px; font-size: 19px; font-weight: 800; margin: 0 4px;
+        }
+        .hajat-badge-inline {
+            background: rgba(239, 68, 68, 0.32); border: 1.5px solid #ef4444;
+            color: #fecaca; padding: 1px 10px; border-radius: 6px; font-size: 24px; font-weight: 900;
+        }
+
+        #sadaqallah-modal {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(4, 8, 15, 0.9); backdrop-filter: blur(16px); display: none;
+            flex-direction: column; align-items: center; justify-content: center; z-index: 500;
+        }
+        .sadaq-box {
+            border: 2px solid #d4af37; background: radial-gradient(circle, #101c30 0%, #070e1a 100%);
+            padding: 36px 54px; border-radius: 22px; text-align: center;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+        }
+        .sadaq-arabic { font-family: 'Scheherazade New', serif; font-weight: 700; font-size: 38px; color: #f7e096; margin-bottom: 8px; }
+        .sadaq-farsi { font-size: 18px; color: #ffffff; margin-bottom: 18px; }
+    </style>
+</head>
+<body>
+
+    <div id="rotate-warning">
+        <svg viewBox="0 0 24 24"><path d="M16 1H8C6.34 1 5 2.34 5 4v16c0 1.66 1.34 3 3 3h8c1.66 0 3-1.34 3-3V4c0-1.66-1.34-3-3-3zm1 18H7V4h10v15z"/></svg>
+        <h2 style="font-size: 18px; color: #fde047;">لطفاً گوشی را افقی بگیرید</h2>
+        <button class="rotate-trigger-btn" onclick="forceRotateLandscape()">
+            🔄 چرخش مستقیم به حالت افقی
+        </button>
+    </div>
+
+    <div id="stage">
+        <audio id="quran-audio-player" preload="auto"></audio>
+
+        <div class="content-area" id="touch-surface">
+            <!-- ۱. نماز اول -->
+            <div id="view-namaz1" class="screen-view active">
+                <img class="full-img" src="Namaz/namaz1.jpg" alt="نماز اول" onerror="this.style.opacity='0'">
+            </div>
+
+            <!-- ۲. نماز دوم -->
+            <div id="view-namaz2" class="screen-view">
+                <img class="full-img" src="Namaz/namaz2.jpg" alt="نماز دوم" onerror="this.style.opacity='0'">
+            </div>
+
+            <!-- ۳. تعقیبات نماز مغرب -->
+            <div id="view-taqibat" class="screen-view">
+                <div class="step-flow-container">
+                    <div class="compact-top-banner">
+                        <h2>تعقیبات مشترکه نماز مغرب</h2>
+                        <span style="font-size: 13px; color: #fde047; font-weight: 800;">مسجد محمودیه</span>
+                    </div>
+
+                    <div class="fullscreen-step-block">
+                        <div class="instruction-line-box gold">
+                            <span class="step-badge-pill gold">تسبیحات و ذکر نجات</span>
+                            <span class="instruction-text-main">تسبیحات حضرت فاطمه (س) و پیش از سخن گفتن، ۷ مرتبه ذکر شریف نجات‌بخش:</span>
+                            <span class="instruction-action-tag">«دفع هفتاد نوع بلا و شرور»</span>
+                        </div>
+                        <div class="flow-arabic-text" style="font-size: 26px;">
+                            «اَللهُ اَکْبَرُ <span class="count-badge-inline">۳۴ مرتبه</span> ✦ اَلْحَمْدُ لِلّهِ <span class="count-badge-inline">۳۳ مرتبه</span> ✦ سُبْحانَ اللهِ <span class="count-badge-inline">۳۳ مرتبه</span> ✦ بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِیمِ، لاَ حَوْلَ وَلاَ قُوَّةَ إِلاَّ بِاللَّهِ الْعَلِیِّ الْعَظِیمِ <span class="count-badge-inline">۷ مرتبه</span>»
+                        </div>
+                    </div>
+
+                    <div class="fullscreen-step-block">
+                        <div class="instruction-line-box blue">
+                            <span class="step-badge-pill blue">حمد الهی و استغفار</span>
+                            <span class="instruction-text-main">سه مرتبه ستایش پروردگار و سپس طلب آمرزش برای تمامی گناهان:</span>
+                            <span class="instruction-action-tag">«آمرزش همه گناهان»</span>
+                        </div>
+                        <div class="flow-arabic-text" style="font-size: 25.5px;">
+                            «الْحَمْدُ لِلّهِ الَّذِی یفْعَلُ مَا یشَاءُ، وَ لا یفْعَلُ مَا یشَاءُ غَیرُهُ <span class="count-badge-inline">۳ مرتبه</span> ✦ سُبْحَانَک لا إِلهَ إِلّا أَنْتَ، اغْفِرْ لِی ذُنُوبِی کلَّهَا جَمِیعاً، فَإِنَّهُ لا یغْفِرُ الذُّنُوبَ کلَّهَا جَمِیعاً إِلّا أَنْتَ»
+                        </div>
+                    </div>
+
+                    <div class="fullscreen-step-block">
+                        <div class="instruction-line-box purple">
+                            <span class="step-badge-pill purple">سجده آخر نافله</span>
+                            <span class="instruction-text-main">نافله مغرب ۴ رکعت است (دو نماز ۲ رکعتی). در سجده آخر نافله‌ها (به‌ویژه شب جمعه) بگویید:</span>
+                            <span class="instruction-action-tag">«آمرزش گناهان بزرگ»</span>
+                        </div>
+                        <div class="flow-arabic-text" style="font-size: 24.5px;">
+                            «اللّهُمَّ إِنِّی أَسْأَلُک بِوَجْهِک الْکرِیمِ، وَاسْمِک الْعَظِیمِ، وَمُلْکک الْقَدِیمِ، أَنْ تُصَلِّی عَلی مُحَمَّدٍ وَآلِهِ، وَأَنْ تَغْفِرَ لِی ذَنْبِی الْعَظِیمَ، إِنَّهُ لَایغْفِرُ الْعَظِیمَ إِلّا الْعَظِیمُ <span class="count-badge-inline">۷ مرتبه</span>»
+                        </div>
+                    </div>
+
+                    <div class="fullscreen-step-block">
+                        <div class="instruction-line-box green">
+                            <span class="step-badge-pill green">اذکار پایانی و دعای جامع</span>
+                            <span class="instruction-text-main">پس از اتمام نافله مغرب ۱۰ مرتبه ذکر استغفار و سپس دعای جامع بهشت و عافیت:</span>
+                            <span class="instruction-action-tag">«همسایگی پیامبر (ص) در بهشت»</span>
+                        </div>
+                        <div class="flow-arabic-text" style="font-size: 25px;">
+                            «مَا شَاءَ اللّهُ، لا قُوَّةَ إِلّا بِاللّهِ، أَسْتَغْفِرُ اللّهَ <span class="count-badge-inline">۱۰ مرتبه</span> ✦ اللّهُمَّ إِنِّی أَسْأَلُک مُوجِبَاتِ رَحْمَتِک، وَعَزائِمَ مَغْفِرَتِک، وَالنَّجاةَ مِنَ النَّارِ، وَالْفَوْزَ بِالْجَنَّةِ، وَجِوَارِ نَبِیک مُحَمَّدٍ (ص)»
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ۴. نماز غفیله -->
+            <div id="view-ghofayleh" class="screen-view">
+                <div class="step-flow-container">
+                    <div class="compact-top-banner">
+                        <h2>آموزش اقامه نماز پرفضیلت غُفَیله (دو رکعت بین نماز مغرب و عشاء)</h2>
+                        <span style="font-size: 13px; color: #4ade80; font-weight: 800;">موجب استجابت سریع دعاها و آمرزش گناهان</span>
+                    </div>
+
+                    <div class="fullscreen-step-block">
+                        <div class="instruction-line-box gold">
+                            <span class="step-badge-pill gold">رکعت اول</span>
+                            <span class="instruction-text-main">دستور قرائت: در رکعت اول پس از سوره حمد، به جای سوره توحید این آیه را بخوانید:</span>
+                            <span class="instruction-action-tag">«سپس به رکوع و سجود می‌روید»</span>
+                        </div>
+                        <div class="flow-arabic-text">
+                            «وَ ذَا النُّونِ إِذْ ذَهَبَ مُغاضِباً فَظَنَّ أَنْ لَنْ نَقْدِرَ عَلَيْهِ فَنادىٰ فِي الظُّلُماتِ أَنْ لا إِلهَ إِلَّا أَنْتَ سُبْحانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ، فَاسْتَجَبْنا لَهُ وَ نَجَّيْناهُ مِنَ الْغَمِّ وَ كَذٰلِكَ نُنْجِي الْمُؤْمِنِينَ»
+                        </div>
+                    </div>
+
+                    <div class="fullscreen-step-block">
+                        <div class="instruction-line-box blue">
+                            <span class="step-badge-pill blue">رکعت دوم</span>
+                            <span class="instruction-text-main">دستور قرائت: در رکعت دوم پس از سوره حمد، به جای سوره توحید این آیه را بخوانید:</span>
+                            <span class="instruction-action-tag">«سپس دست‌ها را برای قنوت بالا می‌برید»</span>
+                        </div>
+                        <div class="flow-arabic-text">
+                            «وَ عِنْدَهُ مَفاتِحُ الْغَيْبِ لا يَعْلَمُها إِلَّا هُوَ وَ يَعْلَمُ ما فِي الْبَرِّ وَ الْبَحْرِ وَ ما تَسْقُطُ مِنْ وَرَقَةٍ إِلَّا يَعْلَمُها وَ لا حَبَّةٍ فِي ظُلُماتِ الْأَرْضِ وَ لا رَطْبٍ وَ لا یابِسٍ إِلَّا فِي كِتابٍ مُبِينٍ»
+                        </div>
+                    </div>
+
+                    <div class="fullscreen-step-block">
+                        <div class="instruction-line-box green">
+                            <span class="step-badge-pill green">قنوت و طلب حاجت</span>
+                            <span class="instruction-text-main">دستور قنوت: این دعا را بخوانید و به جای عبارت مشخص‌شده، حاجت شرعی و قلبی خود را بطلبید:</span>
+                            <span class="instruction-action-tag">«سپس رکوع، سجود، تشهد و سلام را به جا آورید»</span>
+                        </div>
+                        <div class="flow-arabic-text" style="font-size: 28px; line-height: 1.65;">
+                            «اللّٰهُمَّ إِنِّي أَسْأَلُكَ بِمَفاتِحِ الْغَيْبِ الَّتِي لا يَعْلَمُها إِلَّا أَنْتَ أَنْ تُصَلِّيَ عَلىٰ مُحَمَّدٍ وَ آلِ مُحَمَّدٍ وَ أَنْ <span class="hajat-badge-inline">[حاجت خود را بر زبان آورید]</span>... اللّٰهُمَّ أَنْتَ وَلِيُّ نِعْمَتِي وَ الْقادِرُ عَلىٰ طَلِبَتِي، تَعْلَمُ حاجَتِي، فَأَسْأَلُكَ بِحَقِّ مُحَمَّدٍ وَ آلِهِ عَلَيْهِ وَ عَلَيْهِمُ السَّلامُ لَمَّا قَضَيْتَها لِي»
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ۵. احادیث با دکمه‌های جهت در طرفین -->
+            <div id="view-hadith" class="screen-view">
+                <div class="hadith-stage" id="hadith-touch-zone">
+                    <button class="hadith-side-arrow right-arrow" onclick="prevSlide(event)" title="حدیث قبلی">›</button>
+                    <img id="hadith-slide" class="hadith-img-slide" src="Hadith/hadith1.jpg" alt="حدیث">
+                    <button class="hadith-side-arrow left-arrow" onclick="nextSlide(event)" title="حدیث بعدی">‹</button>
+                </div>
+            </div>
+
+            <!-- ۶. تلاوت قرآن (صحنه ثابت تله‌پروامپتر با نشان آیه عثمان طه) -->
+            <div id="view-quran" class="screen-view">
+                <div class="quran-stage-layout">
+                    <div class="quran-header-bar">
+                        <div class="quran-surah-tag"><span id="quran-surah-title">در حال بارگذاری...</span></div>
+                        <div class="quran-page-tag" id="quran-page-title">صفحه ۱ قرآن کریم</div>
+                    </div>
+
+                    <div class="teleprompter-viewport">
+                        <div class="fixed-center-frame">
+                            <div id="verse-motion-box" class="verse-motion-wrapper slide-in-up">
+                                <div id="stage-badge-indicator" class="verse-stage-badge badge-arabic-mode">📖 تلاوت قاری (آیه ۱)</div>
+                                <div id="stage-arabic-content" class="stage-arabic-text">در حال بارگذاری آیات...</div>
+                                <div id="stage-trans-drawer" class="stage-translation-drawer">
+                                    <div id="stage-persian-content" class="stage-persian-text"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="floating-bottom-bar" id="quran-player-bar">
+                    <div style="display:flex; align-items:center; gap:6px;" onclick="event.stopPropagation()">
+                        <label for="page-number-input" style="font-size:12px; color:#d1deee;">صفحه:</label>
+                        <input type="text" inputmode="numeric" pattern="[0-9]*" id="page-number-input" class="page-input-box" value="1"
+                               onfocus="handlePageInputFocus(this)" onblur="handlePageInputBlur()">
+                        <button class="nav-btn small" id="btn-goto-page" onclick="handlePageChange(event)">برو</button>
+                    </div>
+
+                    <button class="nav-btn active" id="play-pause-btn" onclick="handleQuranStep(event)">🔊 ترجمه آیه ۱</button>
+                    <button class="arrow-btn" id="btn-prev-verse" onclick="jumpVerse(-1, event)" title="آیه قبلی">‹</button>
+                    <span id="verse-indicator-label" style="color:#d1deee; font-size:12.5px; min-width:70px; text-align:center;">آیه ۱</span>
+                    <button class="arrow-btn" id="btn-next-verse" onclick="jumpVerse(1, event)" title="آیه بعدی">›</button>
+                </div>
+            </div>
+
+            <!-- ۷. دعای شریف فرج (متن عربی بسیار درشت بدون شماره فراز + ترجمه کوچک لاله زار + پخش خودکار از فراز اول) -->
+            <div id="view-faraj" class="screen-view">
+                <div class="quran-stage-layout">
+                    <div class="quran-header-bar">
+                        <div class="quran-surah-tag"><span style="color: #fde047;">دعای شریف فرج (إِلٰهِى عَظُمَ الْبَلاءُ)</span></div>
+                        <div class="quran-page-tag" style="background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); color: #4ade80;">تعجیل در فرج امام زمان (عج)</div>
+                    </div>
+
+                    <!-- کادر ثابت مرکزی دعای فرج -->
+                    <div class="teleprompter-viewport">
+                        <div class="fixed-center-frame">
+                            <div id="faraj-motion-box" class="verse-motion-wrapper slide-in-up">
+                                <div id="faraj-arabic-content" class="faraj-arabic-large">در حال بارگذاری دعای فرج...</div>
+                                <div id="faraj-trans-drawer" class="stage-translation-drawer active-open">
+                                    <div id="faraj-persian-content" class="faraj-persian-small"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- کنترلر شناور پایین دعای فرج -->
+                <div class="floating-bottom-bar" id="faraj-player-bar">
+                    <button class="nav-btn active" id="faraj-audio-btn" onclick="toggleFarajAudio(event)">🔊 پخش دعای فرج</button>
+                    <button class="arrow-btn" id="btn-prev-faraj" onclick="jumpFarajVerse(-1, event)" title="فراز قبلی">‹</button>
+                    <button class="arrow-btn" id="btn-next-faraj" onclick="jumpFarajVerse(1, event)" title="فراز بعدی">›</button>
+                    <button class="nav-btn small" id="faraj-restart-btn" onclick="restartFarajAudio(event)" style="background: rgba(14, 25, 42, 0.7); border-color: rgba(212, 175, 55, 0.4);">⏮️ از اول</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- منوی شیشه‌ای پایین صفحه -->
+        <nav id="bottom-nav">
+            <div class="brand-container">
+                <div class="gold-accent"></div>
+                <div class="brand-title">مسجد محمودیه</div>
+            </div>
+            
+            <div class="nav-group">
+                <button id="btn-namaz1" class="nav-btn active" onclick="switchSection('namaz1')">نماز اول</button>
+                <button id="btn-namaz2" class="nav-btn" onclick="switchSection('namaz2')">نماز دوم</button>
+                <button id="btn-taqibat" class="nav-btn" onclick="switchSection('taqibat')">تعقیبات مغرب</button>
+                <button id="btn-ghofayleh" class="nav-btn" onclick="switchSection('ghofayleh')">نماز غفیله</button>
+                <button id="btn-hadith" class="nav-btn" onclick="switchSection('hadith')">احادیث</button>
+                <button id="btn-quran" class="nav-btn" onclick="switchSection('quran')">تلاوت قرآن</button>
+                <button id="btn-faraj" class="nav-btn" onclick="switchSection('faraj')">دعای فرج</button>
+            </div>
+        </nav>
+
+        <!-- پاپ‌آپ صدق الله العلی العظیم -->
+        <div id="sadaqallah-modal">
+            <div class="sadaq-box">
+                <div class="sadaq-arabic">صَدَقَ اللهُ العَلِیُّ العَظیم</div>
+                <div class="sadaq-farsi">راست گفت خداوند بلندمرتبه و بزرگ</div>
+                <div style="margin-top: 14px;"><button class="nav-btn" id="btn-close-sadaq" onclick="closeSadaqallahModal()">رفتن به دعای فرج</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bottomNav = document.getElementById('bottom-nav');
+        const touchSurface = document.getElementById('touch-surface');
+        const quranControls = document.getElementById('quran-player-bar');
+        const farajControls = document.getElementById('faraj-player-bar');
+        const audioPlayer = document.getElementById('quran-audio-player');
+        const playBtn = document.getElementById('play-pause-btn');
+        const farajBtn = document.getElementById('faraj-audio-btn');
+        const pageInput = document.getElementById('page-number-input');
+
+        function toPersianDigits(n) {
+            if (n === null || n === undefined) return '';
+            const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return n.toString().replace(/\d/g, x => farsiDigits[x]);
+        }
+
+        touchSurface.addEventListener('click', (e) => {
+            if (e.target.closest('#quran-player-bar') || e.target.closest('#faraj-player-bar') || e.target.closest('#bottom-nav') || e.target.closest('#sadaqallah-modal') || e.target.closest('.hadith-side-arrow')) return;
+            
+            if (currentActiveSection === 'quran') {
+                handleQuranStep(e);
+                return;
+            }
+            if (currentActiveSection === 'faraj') {
+                toggleFarajAudio(e);
+                return;
+            }
+
+            bottomNav.classList.toggle('menu-hidden');
+            if (quranControls) quranControls.classList.toggle('controls-hidden');
+            if (farajControls) farajControls.classList.toggle('controls-hidden');
+        });
+
+        let currentActiveSection = 'namaz1';
+
+        function switchSection(targetId) {
+            currentActiveSection = targetId;
+            document.querySelectorAll('.screen-view').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            const targetView = document.getElementById('view-' + targetId);
+            if (targetView) targetView.classList.add('active');
+            const targetBtn = document.getElementById('btn-' + targetId);
+            if (targetBtn) {
+                targetBtn.classList.add('active');
+                targetBtn.focus();
+            }
+            if (targetId !== 'quran' && targetId !== 'faraj') pauseQuran();
+            if (targetId !== 'faraj') stopFarajAudio();
+
+            // پخش کاملاً خودکار دعای فرج از اولین فراز به محض باز شدن صفحه
+            if (targetId === 'faraj') {
+                loadFarajDataScript(true);
+            }
+        }
+
+        /* -------------------------------------------------------------
+           هماهنگی کیبورد اندروید
+        ------------------------------------------------------------- */
+        function handlePageInputFocus(inputEl) {
+            setTimeout(() => {
+                inputEl.select();
+                inputEl.setSelectionRange(0, 9999);
+            }, 60);
+
+            quranControls.classList.add('input-focused-elevated');
+
+            const alignAboveKeyboard = () => {
+                if (window.visualViewport) {
+                    const vv = window.visualViewport;
+                    const keyboardTop = vv.offsetTop + vv.height;
+                    const targetBottom = Math.max(12, window.innerHeight - keyboardTop + 14);
+                    quranControls.style.bottom = targetBottom + 'px';
+                    quranControls.style.top = 'auto';
+                }
+            };
+
+            alignAboveKeyboard();
+            setTimeout(alignAboveKeyboard, 200);
+            setTimeout(alignAboveKeyboard, 400);
+
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', alignAboveKeyboard);
+                window.visualViewport.addEventListener('scroll', alignAboveKeyboard);
+                inputEl._alignFn = alignAboveKeyboard;
+            }
+        }
+
+        function handlePageInputBlur() {
+            if (window.visualViewport && pageInput._alignFn) {
+                window.visualViewport.removeEventListener('resize', pageInput._alignFn);
+                window.visualViewport.removeEventListener('scroll', pageInput._alignFn);
+                pageInput._alignFn = null;
+            }
+            quranControls.classList.remove('input-focused-elevated');
+            quranControls.style.bottom = '';
+            quranControls.style.top = '';
+            quranControls.style.position = '';
+        }
+
+        pageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handlePageChange();
+                pageInput.blur();
+            }
+        });
+
+        // احادیث
+        const hadithImages = ["Hadith/hadith1.jpg", "Hadith/hadith2.jpg", "Hadith/hadith3.jpg"];
+        let currentSlideIdx = 0;
+        function nextSlide(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            currentSlideIdx = (currentSlideIdx + 1) % hadithImages.length;
+            document.getElementById('hadith-slide').src = hadithImages[currentSlideIdx];
+        }
+        function prevSlide(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            currentSlideIdx = (currentSlideIdx - 1 + hadithImages.length) % hadithImages.length;
+            document.getElementById('hadith-slide').src = hadithImages[currentSlideIdx];
+        }
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const hadithZone = document.getElementById('hadith-touch-zone');
+        hadithZone.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+        hadithZone.addEventListener('touchend', (e) => { touchEndX = e.changedTouches[0].screenX; handleHadithSwipe(); }, { passive: true });
+        function handleHadithSwipe() {
+            const swipeDistance = touchEndX - touchStartX;
+            if (Math.abs(swipeDistance) > 40) {
+                if (swipeDistance < 0) nextSlide();
+                else prevSlide();
+            }
+        }
+
+        /* -------------------------------------------------------------
+           بخش تلاوت قرآن (آیه به آیه)
+        ------------------------------------------------------------- */
+        let currentQuranData = null;
+        let currentVerseIndex = 0;
+        let verseStage = 'arabic';
+        let isPlayingVerseAudio = false;
+        let transitionTimeout = null;
+
+        const motionBox = document.getElementById('verse-motion-box');
+        const badgeIndicator = document.getElementById('stage-badge-indicator');
+        const arabicContent = document.getElementById('stage-arabic-content');
+        const transDrawer = document.getElementById('stage-trans-drawer');
+        const persianContent = document.getElementById('stage-persian-content');
+
+        function handlePageChange(e) {
+            if (e) e.stopPropagation();
+            const inputVal = parseInt(pageInput.value, 10);
+            if (!isNaN(inputVal) && inputVal >= 1 && inputVal <= 604) loadPageNumber(inputVal);
+            pageInput.blur();
+        }
+
+        function loadPageNumber(pageNum) {
+            pauseQuran();
+            currentVerseIndex = 0;
+            verseStage = 'arabic';
+            isPlayingVerseAudio = false;
+            pageInput.value = pageNum;
+
+            const oldScript = document.getElementById('dynamic-page-script');
+            if (oldScript) oldScript.remove();
+
+            window.loadQuranData = function(data) {
+                currentQuranData = data;
+                document.getElementById('quran-surah-title').innerText = data.surahTitle;
+                document.getElementById('quran-page-title').innerText = `صفحه ${data.pageNumber} قرآن کریم`;
+                renderVerseStage(0, false);
+            };
+
+            const script = document.createElement('script');
+            script.id = 'dynamic-page-script';
+            script.src = `Quran/pages/page${pageNum}.js?v=${Date.now()}`;
+            script.onerror = function() { alert(`فایل Quran/pages/page${pageNum}.js پیدا نشد!`); };
+            document.body.appendChild(script);
+        }
+
+        function renderVerseStage(index, animate = true) {
+            if (!currentQuranData || !currentQuranData.verses || !currentQuranData.verses[index]) return;
+            const verse = currentQuranData.verses[index];
+            const verseNum = verse.ayahNumber;
+
+            const applyContent = () => {
+                const osmanBadgeSvg = `<span class="osman-ayah-badge">
+                    <svg class="osman-badge-svg" viewBox="0 0 40 40">
+                        <circle cx="20" cy="20" r="17" fill="none" stroke="#d4af37" stroke-width="1.6"/>
+                        <circle cx="20" cy="20" r="14.5" fill="rgba(12, 24, 42, 0.95)" stroke="#f7e096" stroke-width="0.9" stroke-dasharray="2.5 1.5"/>
+                        <circle cx="20" cy="2.5" r="1.5" fill="#fde047"/>
+                        <circle cx="20" cy="37.5" r="1.5" fill="#fde047"/>
+                        <circle cx="2.5" cy="20" r="1.5" fill="#fde047"/>
+                        <circle cx="37.5" cy="20" r="1.5" fill="#fde047"/>
+                        <circle cx="7.6" cy="7.6" r="1.2" fill="#fde047"/>
+                        <circle cx="32.4" cy="7.6" r="1.2" fill="#fde047"/>
+                        <circle cx="7.6" cy="32.4" r="1.2" fill="#fde047"/>
+                        <circle cx="32.4" cy="32.4" r="1.2" fill="#fde047"/>
+                    </svg>
+                    <span class="osman-ayah-number">${toPersianDigits(verseNum)}</span>
+                </span>`;
+
+                arabicContent.innerHTML = `${verse.arabic} ${osmanBadgeSvg}`;
+                persianContent.innerText = verse.translation;
+
+                if (verseStage === 'arabic') {
+                    badgeIndicator.className = 'verse-stage-badge badge-arabic-mode';
+                    badgeIndicator.innerText = `📖 در حال تلاوت قاری (آیه ${toPersianDigits(verseNum)})`;
+                    arabicContent.classList.remove('elevated-mode');
+                    transDrawer.classList.remove('active-open');
+
+                    playBtn.innerText = `🔊 ترجمه آیه ${toPersianDigits(verseNum)}`;
+                    playBtn.style.background = "rgba(212, 175, 55, 0.9)";
+                    playBtn.style.color = "#060b14";
+                } else {
+                    badgeIndicator.className = 'verse-stage-badge badge-trans-mode';
+                    badgeIndicator.innerText = `🎙️ ترجمه گویای فارسی (آیه ${toPersianDigits(verseNum)})`;
+                    arabicContent.classList.add('elevated-mode');
+                    transDrawer.classList.add('active-open');
+
+                    playBtn.innerText = `⏭️ رد کردن / آیه بعد`;
+                    playBtn.style.background = "#22c55e";
+                    playBtn.style.color = "#060b14";
+                }
+
+                document.getElementById('verse-indicator-label').innerText = `آیه ${toPersianDigits(verseNum)}`;
+                motionBox.className = 'verse-motion-wrapper slide-in-up';
+            };
+
+            if (transitionTimeout) clearTimeout(transitionTimeout);
+
+            if (animate) {
+                motionBox.className = 'verse-motion-wrapper slide-out-up';
+                transitionTimeout = setTimeout(() => {
+                    applyContent();
+                    transitionTimeout = null;
+                }, 260);
+            } else {
+                applyContent();
+            }
+        }
+
+        function getVerseEndTime(index) {
+            if (!currentQuranData || !currentQuranData.verses) return 999999;
+            const verses = currentQuranData.verses;
+            if (index < verses.length - 1 && verses[index + 1].startTime !== undefined) {
+                return verses[index + 1].startTime;
+            }
+            return audioPlayer.duration && !isNaN(audioPlayer.duration) ? audioPlayer.duration : 999999;
+        }
+
+        function handleQuranStep(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            if (!currentQuranData || !currentQuranData.verses) return;
+
+            if (verseStage === 'arabic') {
+                verseStage = 'translation';
+                renderVerseStage(currentVerseIndex, false);
+                playVerseTranslation(currentVerseIndex);
+            } else {
+                audioPlayer.pause();
+                isPlayingVerseAudio = false;
+                moveToNextAyah();
+            }
+        }
+
+        function moveToNextAyah() {
+            if (currentVerseIndex < currentQuranData.verses.length - 1) {
+                currentVerseIndex++;
+                verseStage = 'arabic';
+                renderVerseStage(currentVerseIndex, true);
+            } else {
+                triggerSadaqallah();
+            }
+        }
+
+        function playVerseTranslation(index) {
+            if (!currentQuranData || !currentQuranData.verses || !currentQuranData.verses[index]) return;
+            const verse = currentQuranData.verses[index];
+            const audioPath = currentQuranData.audioSrc;
+            const absoluteAudioUrl = new URL(audioPath, window.location.href).href;
+
+            if (audioPlayer.src !== absoluteAudioUrl) {
+                audioPlayer.src = absoluteAudioUrl;
+                audioPlayer.load();
+            }
+
+            audioPlayer.currentTime = verse.startTime;
+            audioPlayer.play().then(() => {
+                isPlayingVerseAudio = true;
+            }).catch(err => {
+                isPlayingVerseAudio = false;
+                console.error("خطا در بارگیری صوت:", err);
+            });
+        }
+
+        function pauseQuran() {
+            isPlayingVerseAudio = false;
+            audioPlayer.pause();
+            verseStage = 'arabic';
+            if (currentQuranData && currentQuranData.verses[currentVerseIndex]) {
+                renderVerseStage(currentVerseIndex, false);
+            }
+        }
+
+        function jumpVerse(direction, e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            if (!currentQuranData || !currentQuranData.verses) return;
+            if (isPlayingVerseAudio) {
+                audioPlayer.pause();
+                isPlayingVerseAudio = false;
+            }
+            currentVerseIndex = Math.max(0, Math.min(currentQuranData.verses.length - 1, currentVerseIndex + direction));
+            verseStage = 'arabic';
+            renderVerseStage(currentVerseIndex, true);
+        }
+
+        function triggerSadaqallah() {
+            pauseQuran();
+            currentVerseIndex = 0;
+
+            audioPlayer.onended = null;
+            audioPlayer.src = "Quran/audio/sadaqallah.wav";
+            audioPlayer.play().catch(() => {});
+            document.getElementById('sadaqallah-modal').style.display = 'flex';
+
+            audioPlayer.onended = () => {
+                setTimeout(() => {
+                    closeSadaqallahModal();
+                }, 2000);
+            };
+        }
+
+        function closeSadaqallahModal() {
+            document.getElementById('sadaqallah-modal').style.display = 'none';
+            audioPlayer.onended = null;
+            switchSection('faraj');
+        }
+
+        /* =============================================================
+           بخش دعای فرج: پخش خودکار از فراز اول بدون شماره فراز
+        ============================================================= */
+        let currentFarajData = {
+            title: "دعای شریف فرج",
+            audioSrc: "Quran/audio/faraj.wav",
+            verses: [
+                { verseNumber: 1, arabic: "إِلٰهِى عَظُمَ الْبَلاءُ", translation: "خدایا! بلا و گرفتاری بزرگ شد،", startTime: 0.0 },
+                { verseNumber: 2, arabic: "وَ بَرِحَ الْخَفاءُ", translation: "و ناپیداها آشکار گشت،", startTime: 0.0 },
+                { verseNumber: 3, arabic: "وَ انْکَشَفَ الْغِطاءُ", translation: "و پرده برافتاد،", startTime: 0.0 },
+                { verseNumber: 4, arabic: "وَ انْقَطَعَ الرَّجاءُ", translation: "و امیدها بریده شد،", startTime: 0.0 },
+                { verseNumber: 5, arabic: "وَ ضاقَتِ الْأَرْضُ وَ مُنِعَتِ السَّماءُ", translation: "و زمین تنگ شد و آسمان رحمتش را بازداشت،", startTime: 0.0 },
+                { verseNumber: 6, arabic: "وَ أَنْتَ الْمُسْتَعانُ", translation: "و تنها تویی یاور و مددرسان،", startTime: 0.0 },
+                { verseNumber: 7, arabic: "وَ إِلَیْکَ الْمُشْتَکىٰ", translation: "و شکایت تنها به سوی توست،", startTime: 0.0 },
+                { verseNumber: 8, arabic: "وَ عَلَیْکَ الْمُعَوَّلُ", translation: "و اعتماد و تکیه تنها بر تو است،", startTime: 0.0 },
+                { verseNumber: 9, arabic: "فِى الشِّدَّةِ وَ الرَّخاءِ", translation: "در سختی و آسایش.", startTime: 0.0 },
+                { verseNumber: 10, arabic: "اللّٰهُمَّ صَلِّ عَلىٰ مُحَمَّدٍ وَ آلِ مُحَمَّدٍ", translation: "خدایا! بر محمد و خاندان پاکش درود فرست،", startTime: 0.0 },
+                { verseNumber: 11, arabic: "أُولِى الْأَمْرِ", translation: "همان صاحبان امری که", startTime: 0.0 },
+                { verseNumber: 12, arabic: "الَّذِینَ فَرَضْتَ عَلَیْنا طاعَتَهُمْ", translation: "اطاعتشان را بر ما واجب فرمودی", startTime: 0.0 },
+                { verseNumber: 13, arabic: "وَ عَرَّفْتَنا بِذٰلِکَ مَنْزِلَتَهُمْ", translation: "و به واسطه آن، جایگاهشان را به ما شناساندی؛", startTime: 0.0 },
+                { verseNumber: 14, arabic: "فَفَرِّجْ عَنَّا", translation: "پس برای ما گشایش فرما", startTime: 0.0 },
+                { verseNumber: 15, arabic: "بِحَقِّهِمْ", translation: "به حق و حرمت ایشان،", startTime: 0.0 },
+                { verseNumber: 16, arabic: "فَرَجاً عاجِلاً قَرِیباً", translation: "گشایشی فوری و نزدیک،", startTime: 0.0 },
+                { verseNumber: 17, arabic: "کَلَمْحِ الْبَصَرِ", translation: "همچون بر هم نهادن چشم", startTime: 0.0 },
+                { verseNumber: 18, arabic: "أَوْ هُوَ أَقْرَبُ", translation: "یا نزدیک‌تر از آن.", startTime: 0.0 },
+                { verseNumber: 19, arabic: "یَا مُحَمَّدُ یَا عَلِىُّ", translation: "ای محمد، ای علی!", startTime: 0.0 },
+                { verseNumber: 20, arabic: "یَا عَلِىُّ یَا مُحَمَّدُ", translation: "ای علی، ای محمد!", startTime: 0.0 },
+                { verseNumber: 21, arabic: "اکْفِیانِى فَإِنَّکُما کافِیانِ", translation: "مرا کفایت کنید که شما دو بزرگوار کفایت‌کننده‌اید،", startTime: 0.0 },
+                { verseNumber: 22, arabic: "وَ انْصُرانِى فَإِنَّکُما ناصِرانِ", translation: "و مرا یاری فرمایید که شما دو بزرگوار یاری‌کننده‌اید.", startTime: 0.0 },
+                { verseNumber: 23, arabic: "یَا مَوْلانا یَا صاحِبَ الزَّمانِ", translation: "ای مولای ما، ای صاحب‌الزمان!", startTime: 0.0 },
+                { verseNumber: 24, arabic: "الْغَوْثَ الْغَوْثَ الْغَوْثَ", translation: "به فریاد رس، به فریاد رس، به فریاد رس؛", startTime: 0.0 },
+                { verseNumber: 25, arabic: "أَدْرِکْنِى أَدْرِکْنِى أَدْرِکْنِى", translation: "مرا دریاب، مرا دریاب، مرا دریاب؛", startTime: 0.0 },
+                { verseNumber: 26, arabic: "السَّاعَةَ السَّاعَةَ السَّاعَةَ", translation: "همین ساعت، همین ساعت، همین ساعت؛", startTime: 0.0 },
+                { verseNumber: 27, arabic: "الْعَجَلَ الْعَجَلَ الْعَجَلَ", translation: "شتاب کن، شتاب کن، شتاب کن؛", startTime: 0.0 },
+                { verseNumber: 28, arabic: "یَا أَرْحَمَ الرَّاحِمِینَ", translation: "ای مهربان‌ترین مهربانان،", startTime: 0.0 },
+                { verseNumber: 29, arabic: "بِحَقِّ مُحَمَّدٍ وَ آلِهِ الطَّاهِرِینَ", translation: "به حق محمد و خاندان پاک و مطهرش.", startTime: 0.0 }
+            ]
+        };
+
+        let currentFarajIndex = 0;
+        let isPlayingFaraj = false;
+        let farajTransitionTimeout = null;
+
+        const farajMotionBox = document.getElementById('faraj-motion-box');
+        const farajArabic = document.getElementById('faraj-arabic-content');
+        const farajPersian = document.getElementById('faraj-persian-content');
+
+        function loadFarajDataScript(autoPlay = false) {
+            window.loadFarajData = function(data) {
+                currentFarajData = data;
+                if (currentActiveSection === 'faraj') {
+                    currentFarajIndex = 0;
+                    renderFarajStage(0, false);
+                    if (autoPlay) playFarajAudio(true);
+                }
+            };
+            const oldScript = document.getElementById('dynamic-faraj-script');
+            if (oldScript) oldScript.remove();
+            const s = document.createElement('script');
+            s.id = 'dynamic-faraj-script';
+            s.src = `Quran/pages/faraj.js?v=${Date.now()}`;
+            s.onerror = () => {
+                if (currentActiveSection === 'faraj') {
+                    currentFarajIndex = 0;
+                    renderFarajStage(0, false);
+                    if (autoPlay) playFarajAudio(true);
+                }
+            };
+            document.body.appendChild(s);
+        }
+
+        // رندر کاملاً تمیز بدون شماره فراز یا ترنج
+        function renderFarajStage(index, animate = true) {
+            if (!currentFarajData || !currentFarajData.verses || !currentFarajData.verses[index]) return;
+            const verse = currentFarajData.verses[index];
+
+            const applyFarajContent = () => {
+                farajArabic.innerText = verse.arabic;
+                farajPersian.innerText = verse.translation;
+                farajMotionBox.className = 'verse-motion-wrapper slide-in-up';
+            };
+
+            if (farajTransitionTimeout) clearTimeout(farajTransitionTimeout);
+
+            if (animate) {
+                farajMotionBox.className = 'verse-motion-wrapper slide-out-up';
+                farajTransitionTimeout = setTimeout(() => {
+                    applyFarajContent();
+                    farajTransitionTimeout = null;
+                }, 240);
+            } else {
+                applyFarajContent();
+            }
+        }
+
+        function toggleFarajAudio(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            if (isPlayingFaraj) stopFarajAudio();
+            else playFarajAudio(false);
+        }
+
+        // تضمین شروع صوت از صفر ثانیه و فراز اول
+        function playFarajAudio(resetToBeginning = true) {
+            audioPlayer.pause();
+            isPlayingVerseAudio = false;
+
+            const audioPath = (currentFarajData && currentFarajData.audioSrc) || "Quran/audio/faraj.wav";
+            const absoluteAudioUrl = new URL(audioPath, window.location.href).href;
+
+            if (audioPlayer.src !== absoluteAudioUrl) {
+                audioPlayer.src = absoluteAudioUrl;
+                audioPlayer.load();
+            }
+
+            if (resetToBeginning) {
+                currentFarajIndex = 0;
+                audioPlayer.currentTime = 0;
+                renderFarajStage(0, false);
+            } else if (currentFarajData && currentFarajData.verses && currentFarajData.verses[currentFarajIndex]) {
+                const targetTime = currentFarajData.verses[currentFarajIndex].startTime;
+                audioPlayer.currentTime = (targetTime !== undefined) ? targetTime : 0;
+            }
+
+            audioPlayer.play().then(() => {
+                isPlayingFaraj = true;
+                farajBtn.innerText = "⏸️ توقف دعای فرج";
+                farajBtn.style.background = "#ef4444";
+                farajBtn.style.color = "#ffffff";
+            }).catch(err => {
+                isPlayingFaraj = false;
+                farajBtn.innerText = "🔊 پخش دعای فرج";
+                farajBtn.style.background = "rgba(212, 175, 55, 0.9)";
+                farajBtn.style.color = "#060b14";
+            });
+
+            audioPlayer.onended = () => {
+                stopFarajAudio();
+                currentFarajIndex = 0;
+                renderFarajStage(0, true);
+            };
+        }
+
+        function stopFarajAudio() {
+            if (isPlayingFaraj) {
+                audioPlayer.pause();
+                isPlayingFaraj = false;
+                farajBtn.innerText = "🔊 پخش دعای فرج";
+                farajBtn.style.background = "rgba(212, 175, 55, 0.9)";
+                farajBtn.style.color = "#060b14";
+            }
+        }
+
+        function restartFarajAudio(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            playFarajAudio(true);
+        }
+
+        function jumpFarajVerse(direction, e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            if (!currentFarajData || !currentFarajData.verses) return;
+            currentFarajIndex = Math.max(0, Math.min(currentFarajData.verses.length - 1, currentFarajIndex + direction));
+            
+            const targetTime = currentFarajData.verses[currentFarajIndex].startTime;
+            if (targetTime !== undefined) {
+                audioPlayer.currentTime = targetTime;
+            }
+            renderFarajStage(currentFarajIndex, true);
+        }
+
+        /* همگام‌سازی زمان صوت با آیات قرآن و فرازهای دعای فرج */
+        audioPlayer.ontimeupdate = () => {
+            const currentTime = audioPlayer.currentTime;
+
+            // همگام‌سازی خودکار و دقیق دعای فرج
+            if (currentActiveSection === 'faraj' && isPlayingFaraj && currentFarajData && currentFarajData.verses) {
+                const verses = currentFarajData.verses;
+                for (let i = verses.length - 1; i >= 0; i--) {
+                    const vTime = verses[i].startTime;
+                    if (vTime !== undefined && (i === 0 || vTime > 0) && currentTime >= vTime) {
+                        if (currentFarajIndex !== i) {
+                            currentFarajIndex = i;
+                            renderFarajStage(currentFarajIndex, true);
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // همگام‌سازی قرآن
+            if (currentActiveSection === 'quran' && isPlayingVerseAudio && currentQuranData && currentQuranData.verses) {
+                const endTime = getVerseEndTime(currentVerseIndex);
+                if (currentTime >= endTime - 0.15) {
+                    audioPlayer.pause();
+                    isPlayingVerseAudio = false;
+                    moveToNextAyah();
+                }
+            }
+        };
+
+        async function forceRotateLandscape() {
+            try {
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    await (document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen).call(document.documentElement);
+                }
+                if (screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape');
+            } catch (err) {}
+        }
+
+        function toggleFullScreen() {
+            const isFull = document.fullscreenElement || document.webkitFullscreenElement;
+            if (!isFull) {
+                const el = document.documentElement;
+                const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+                if (req) {
+                    req.call(el).then(() => {
+                        if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {});
+                    }).catch(() => {});
+                }
+            } else {
+                const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+                if (exit) {
+                    exit.call(document).catch(() => {});
+                }
+            }
+        }
+
+        /* کنترل تلویزیون (D-Pad) */
+        const navButtons = [
+            document.getElementById('btn-namaz1'),
+            document.getElementById('btn-namaz2'),
+            document.getElementById('btn-taqibat'),
+            document.getElementById('btn-ghofayleh'),
+            document.getElementById('btn-hadith'),
+            document.getElementById('btn-quran'),
+            document.getElementById('btn-faraj')
+        ];
+
+        window.addEventListener('keydown', (e) => {
+            const key = e.key;
+            const keyCode = e.keyCode;
+            
+            if (bottomNav.classList.contains('menu-hidden')) {
+                bottomNav.classList.remove('menu-hidden');
+            }
+
+            const activeEl = document.activeElement;
+            const inNavIndex = navButtons.indexOf(activeEl);
+
+            if (key === 'ArrowLeft' || keyCode === 37) {
+                if (inNavIndex !== -1) {
+                    e.preventDefault();
+                    const nextIndex = (inNavIndex + 1) % navButtons.length;
+                    navButtons[nextIndex].focus();
+                    navButtons[nextIndex].click();
+                } else if (currentActiveSection === 'hadith') {
+                    e.preventDefault();
+                    nextSlide();
+                } else if (currentActiveSection === 'quran') {
+                    e.preventDefault();
+                    jumpVerse(1);
+                } else if (currentActiveSection === 'faraj') {
+                    e.preventDefault();
+                    jumpFarajVerse(1);
+                }
+            } else if (key === 'ArrowRight' || keyCode === 39) {
+                if (inNavIndex !== -1) {
+                    e.preventDefault();
+                    const prevIndex = (inNavIndex - 1 + navButtons.length) % navButtons.length;
+                    navButtons[prevIndex].focus();
+                    navButtons[prevIndex].click();
+                } else if (currentActiveSection === 'hadith') {
+                    e.preventDefault();
+                    prevSlide();
+                } else if (currentActiveSection === 'quran') {
+                    e.preventDefault();
+                    jumpVerse(-1);
+                } else if (currentActiveSection === 'faraj') {
+                    e.preventDefault();
+                    jumpFarajVerse(-1);
+                }
+            } else if (key === 'ArrowUp' || keyCode === 38) {
+                e.preventDefault();
+                if (currentActiveSection === 'quran') playBtn.focus();
+                else if (currentActiveSection === 'faraj') farajBtn.focus();
+            } else if (key === 'ArrowDown' || keyCode === 40) {
+                e.preventDefault();
+                const currentActiveBtn = document.getElementById('btn-' + currentActiveSection);
+                if (currentActiveBtn) currentActiveBtn.focus();
+                else navButtons[0].focus();
+            } else if (key === 'Enter' || keyCode === 13) {
+                if (activeEl && activeEl.id === 'page-number-input') {
+                    handlePageChange();
+                    return;
+                }
+                if (currentActiveSection === 'quran') {
+                    e.preventDefault();
+                    handleQuranStep();
+                    return;
+                }
+                if (currentActiveSection === 'faraj') {
+                    e.preventDefault();
+                    toggleFarajAudio();
+                    return;
+                }
+                e.preventDefault();
+                toggleFullScreen();
+            } else if (key === 'Escape' || key === 'Backspace' || keyCode === 27 || keyCode === 8 || keyCode === 10009 || keyCode === 461) {
+                e.preventDefault();
+                switchSection('namaz1');
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadPageNumber(1);
+            loadFarajDataScript(false);
+            setTimeout(() => {
+                const firstBtn = document.getElementById('btn-namaz1');
+                if (firstBtn) firstBtn.focus();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
