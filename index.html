@@ -126,9 +126,7 @@
         .hadith-side-arrow.right-arrow { right: 26px; }
         .hadith-side-arrow.left-arrow { left: 26px; }
 
-        /* ========================================================
-           صحنه ثابت تله‌پروامپتر (قرآن و دعای فرج)
-        ======================================================== */
+        /* صحنه ثابت تله‌پروامپتر (قرآن و دعای فرج) */
         .quran-stage-layout {
             width: 100%; height: 100%; display: flex; flex-direction: column;
             padding: 16px 36px 115px 36px; position: relative;
@@ -212,7 +210,7 @@
             width: 100%;
         }
 
-        /* ترجمه فارسی کوچک و هماهنگ دعای فرج */
+        /* ترجمه فارسی کوچک دعای فرج */
         .faraj-persian-small {
             font-family: 'Lalezar', cursive, sans-serif !important;
             font-size: 20px !important;
@@ -256,9 +254,7 @@
             text-align: center; width: 100%;
         }
 
-        /* ========================================================
-           استایل‌های تم فیروزه‌ای جمکران و پرده‌های مسجد سهله و جمکران
-        ======================================================== */
+        /* استایل‌های تم فیروزه‌ای جمکران و پرده‌های مسجد سهله و جمکران */
         #view-faraj {
             background: radial-gradient(circle at center, #0e5b6e 0%, #083742 55%, #031c23 100%) !important;
         }
@@ -321,6 +317,7 @@
         }
         .floating-bottom-bar.controls-hidden { transform: translateX(-50%) translateY(140px); opacity: 0; pointer-events: none; }
         
+        /* حالت فعال شدن کیبورد روی گوشی */
         .floating-bottom-bar.input-focused-elevated {
             position: fixed !important;
             border-color: #fde047 !important;
@@ -337,8 +334,8 @@
         }
 
         .page-input-box {
-            width: 58px; height: 34px; background: rgba(9, 18, 31, 0.95);
-            border: 1.5px solid rgba(212, 175, 55, 0.6); border-radius: 6px;
+            width: 62px; height: 34px; background: rgba(9, 18, 31, 0.95);
+            border: 1.5px solid rgba(212, 175, 55, 0.7); border-radius: 6px;
             color: #fde047; text-align: center; font-size: 16px; font-weight: 800; outline: none;
         }
         .page-input-box::selection { background: #d4af37; color: #060b14; }
@@ -517,7 +514,7 @@
                         <div class="instruction-line-box blue">
                             <span class="step-badge-pill blue">رکعت دوم</span>
                             <span class="instruction-text-main">دستور قرائت: در رکعت دوم پس از سوره حمد، به جای سوره توحید این آیه را بخوانید:</span>
-                            <span class="instruction-action-tag">«سپس دست‌ها را برای قنوت بالا می‌برید»</span>
+                            <span class="instruction-action-tag">«سپس دست‌ها را برای قنوت بالا می‌بريد»</span>
                         </div>
                         <div class="flow-arabic-text">
                             «وَ عِنْدَهُ مَفاتِحُ الْغَيْبِ لا يَعْلَمُها إِلَّا هُوَ وَ يَعْلَمُ ما فِي الْبَرِّ وَ الْبَحْرِ وَ ما تَسْقُطُ مِنْ وَرَقَةٍ إِلَّا يَعْلَمُها وَ لا حَبَّةٍ فِي ظُلُماتِ الْأَرْضِ وَ لا رَطْبٍ وَ لا یابِسٍ إِلَّا فِي كِتابٍ مُبِينٍ»
@@ -568,10 +565,20 @@
                 </div>
 
                 <div class="floating-bottom-bar" id="quran-player-bar">
-                    <div style="display:flex; align-items:center; gap:6px;" onclick="event.stopPropagation()">
-                        <label for="page-number-input" style="font-size:12px; color:#d1deee;">صفحه:</label>
+                    <!-- کادر تغییر صفحه با جلوگیری کامل از انتقال کلیک به صفحه و پاک‌شدن خودکار -->
+                    <div style="display:flex; align-items:center; gap:6px;" 
+                         onclick="event.stopPropagation()" 
+                         onmousedown="event.stopPropagation()" 
+                         ontouchstart="event.stopPropagation()" 
+                         ontouchend="event.stopPropagation()">
+                        <label for="page-number-input" style="font-size:12px; color:#d1deee;" onclick="event.stopPropagation()">صفحه:</label>
                         <input type="text" inputmode="numeric" pattern="[0-9]*" id="page-number-input" class="page-input-box" value="1"
-                               onfocus="handlePageInputFocus(this)" onblur="handlePageInputBlur()">
+                               onclick="event.stopPropagation()"
+                               onmousedown="event.stopPropagation()"
+                               ontouchstart="event.stopPropagation()"
+                               ontouchend="event.stopPropagation()"
+                               onfocus="handlePageInputFocus(this)" 
+                               onblur="handlePageInputBlur()">
                         <button class="nav-btn small" id="btn-goto-page" onclick="handlePageChange(event)">برو</button>
                     </div>
 
@@ -584,7 +591,6 @@
 
             <!-- ۷. دعای شریف فرج (تم فیروزه‌ای جمکران + تصاویر محو جمکران و سهله در دو طرف) -->
             <div id="view-faraj" class="screen-view">
-                <!-- پرده‌های پس‌زمینه با تصاویر مسجد جمکران و مسجد سهله -->
                 <div class="shrine-backdrop-wrapper">
                     <div class="shrine-vignette jamkaran-side">
                         <img src="Faraj/jamkaran.jpg" alt="مسجد مقدس جمکران" onerror="this.style.display='none'">
@@ -596,7 +602,6 @@
                     </div>
                 </div>
 
-                <!-- بوم متحرک پارتیکل‌های معنوی فیروزه‌ای و طلایی -->
                 <canvas id="faraj-particles-canvas"></canvas>
 
                 <div class="quran-stage-layout" style="position:relative; z-index:3;">
@@ -664,6 +669,9 @@
         const farajBtn = document.getElementById('faraj-audio-btn');
         const pageInput = document.getElementById('page-number-input');
 
+        let lastInputFocusTime = 0;
+        let lastStoredPageNumber = 1;
+
         function toPersianDigits(n) {
             if (n === null || n === undefined) return '';
             const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
@@ -702,9 +710,19 @@
             localStorage.setItem('mosque_quran_date', todayStr);
         }
 
+        /* رویداد کلیک صفحه اصلی با مسدودسازی کلیک‌های مجازی ناشی از کیبورد */
         touchSurface.addEventListener('click', (e) => {
             if (e.target.closest('#quran-player-bar') || e.target.closest('#faraj-player-bar') || e.target.closest('#bottom-nav') || e.target.closest('#sadaqallah-modal') || e.target.closest('.hadith-side-arrow')) return;
             
+            // جلوگیری از کلیک‌های مجازی کیبورد تا ۷۰۰ میلی‌ثانیه پس از لمس کادر
+            if (Date.now() - lastInputFocusTime < 700) return;
+            
+            // اگر کیبورد باز است، فقط کیبورد را ببندد و آیه را جلو نبرد
+            if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+                document.activeElement.blur();
+                return;
+            }
+
             if (currentActiveSection === 'quran') {
                 handleQuranStep(e);
                 return;
@@ -742,13 +760,19 @@
         }
 
         /* -------------------------------------------------------------
-           هماهنگی کیبورد اندروید
+           هماهنگی کیبورد اندروید + پاک شدن خودکار عدد قبلی
         ------------------------------------------------------------- */
         function handlePageInputFocus(inputEl) {
-            setTimeout(() => {
-                inputEl.select();
-                inputEl.setSelectionRange(0, 9999);
-            }, 60);
+            lastInputFocusTime = Date.now();
+            
+            // ذخیره عدد قبلی برای بازیابی در صورت انصراف
+            const currentVal = parseInt(inputEl.value, 10);
+            if (!isNaN(currentVal) && currentVal >= 1 && currentVal <= 604) {
+                lastStoredPageNumber = currentVal;
+            }
+            
+            // خالی کردن مستقیم و کامل کادر
+            inputEl.value = '';
 
             quranControls.classList.add('input-focused-elevated');
 
@@ -763,8 +787,8 @@
             };
 
             alignAboveKeyboard();
-            setTimeout(alignAboveKeyboard, 200);
-            setTimeout(alignAboveKeyboard, 400);
+            setTimeout(alignAboveKeyboard, 150);
+            setTimeout(alignAboveKeyboard, 350);
 
             if (window.visualViewport) {
                 window.visualViewport.addEventListener('resize', alignAboveKeyboard);
@@ -774,11 +798,19 @@
         }
 
         function handlePageInputBlur() {
+            lastInputFocusTime = Date.now();
             if (window.visualViewport && pageInput._alignFn) {
                 window.visualViewport.removeEventListener('resize', pageInput._alignFn);
                 window.visualViewport.removeEventListener('scroll', pageInput._alignFn);
                 pageInput._alignFn = null;
             }
+
+            // اگر کاربر عددی ننوشت، عدد قبلی برگردد
+            const currentVal = parseInt(pageInput.value, 10);
+            if (isNaN(currentVal) || currentVal < 1 || currentVal > 604) {
+                pageInput.value = lastStoredPageNumber;
+            }
+
             quranControls.classList.remove('input-focused-elevated');
             quranControls.style.bottom = '';
             quranControls.style.top = '';
@@ -836,11 +868,18 @@
         const persianContent = document.getElementById('stage-persian-content');
 
         function handlePageChange(e) {
-            if (e) e.stopPropagation();
+            if (e) {
+                e.stopPropagation();
+                if (e.preventDefault) e.preventDefault();
+            }
+            lastInputFocusTime = Date.now();
             const inputVal = parseInt(pageInput.value, 10);
             if (!isNaN(inputVal) && inputVal >= 1 && inputVal <= 604) {
+                lastStoredPageNumber = inputVal;
                 saveQuranPageProgress(inputVal);
                 loadPageNumber(inputVal);
+            } else {
+                pageInput.value = lastStoredPageNumber;
             }
             pageInput.blur();
         }
@@ -850,6 +889,7 @@
             currentVerseIndex = 0;
             verseStage = 'arabic';
             isPlayingVerseAudio = false;
+            lastStoredPageNumber = pageNum;
             pageInput.value = pageNum;
 
             const oldScript = document.getElementById('dynamic-page-script');
@@ -1029,7 +1069,7 @@
         }
 
         /* =============================================================
-           بخش دعای فرج: پس‌زمینه فیروزه‌ای جمکران، بدون پخش خودکار
+           بخش دعای فرج
         ============================================================= */
         let currentFarajData = {
             title: "دعای شریف فرج",
