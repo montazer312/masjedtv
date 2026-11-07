@@ -207,7 +207,7 @@
             font-size: 48px !important;
             line-height: 1.8 !important;
             color: #fde047 !important;
-            text-shadow: 0 0 25px rgba(253, 224, 71, 0.4) !important;
+            text-shadow: 0 0 25px rgba(253, 224, 71, 0.45) !important;
             text-align: center !important;
             width: 100%;
         }
@@ -217,11 +217,11 @@
             font-family: 'Lalezar', cursive, sans-serif !important;
             font-size: 20px !important;
             line-height: 1.6 !important;
-            color: #cbd5e1 !important;
-            text-shadow: none !important;
+            color: #d1fae5 !important;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7) !important;
             text-align: center !important;
             width: 100%;
-            opacity: 0.9;
+            opacity: 0.95;
         }
 
         /* نشان مصحف عثمان‌طه فقط در قرآن */
@@ -256,10 +256,58 @@
             text-align: center; width: 100%;
         }
 
+        /* ========================================================
+           استایل‌های تم فیروزه‌ای جمکران و پرده‌های مسجد سهله و جمکران
+        ======================================================== */
+        #view-faraj {
+            background: radial-gradient(circle at center, #0e5b6e 0%, #083742 55%, #031c23 100%) !important;
+        }
+
+        .shrine-backdrop-wrapper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1; overflow: hidden; display: flex;
+        }
+
+        .shrine-vignette {
+            position: absolute; top: 0; bottom: 0; width: 34%;
+            opacity: 0.38; transition: opacity 0.5s ease;
+        }
+        .shrine-vignette img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: contrast(1.1) saturate(1.15);
+        }
+        .shrine-vignette.jamkaran-side {
+            right: 0;
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to left, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%);
+        }
+        .shrine-vignette.sahla-side {
+            left: 0;
+            -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%);
+        }
+
+        .shrine-title-tag {
+            position: absolute; bottom: 62px;
+            font-size: 12px; font-weight: 800; color: #a7f3d0;
+            background: rgba(4, 30, 38, 0.7); padding: 3px 12px; border-radius: 12px;
+            border: 1px solid rgba(45, 212, 191, 0.4); backdrop-filter: blur(8px);
+            letter-spacing: 0.5px;
+        }
+        .jamkaran-side .shrine-title-tag { right: 24px; }
+        .sahla-side .shrine-title-tag { left: 24px; }
+
         /* بوم پارتیکل‌های معنوی دعای فرج */
         #faraj-particles-canvas {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 1;
+            pointer-events: none; z-index: 2;
+        }
+
+        /* کادر شیشه‌ای فیروزه‌ای اختصاصی دعای فرج */
+        .faraj-turquoise-frame {
+            background: radial-gradient(circle at center, rgba(8, 62, 75, 0.92) 0%, rgba(3, 29, 36, 0.97) 100%) !important;
+            border: 2px solid rgba(45, 212, 191, 0.65) !important;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.95), 0 0 40px rgba(20, 184, 166, 0.4), inset 0 0 35px rgba(45, 212, 191, 0.15) !important;
         }
 
         /* کنترلرهای شناور پایین */
@@ -534,22 +582,34 @@
                 </div>
             </div>
 
-            <!-- ۷. دعای شریف فرج (پس‌زمینه پارتیکل امام زمانی، بدون پخش خودکار، متن عربی بزرگ) -->
+            <!-- ۷. دعای شریف فرج (تم فیروزه‌ای جمکران + تصاویر محو جمکران و سهله در دو طرف) -->
             <div id="view-faraj" class="screen-view">
-                <!-- بوم متحرک پارتیکل‌های معنوی نورانی -->
+                <!-- پرده‌های پس‌زمینه با تصاویر مسجد جمکران و مسجد سهله -->
+                <div class="shrine-backdrop-wrapper">
+                    <div class="shrine-vignette jamkaran-side">
+                        <img src="Faraj/jamkaran.jpg" alt="مسجد مقدس جمکران" onerror="this.style.display='none'">
+                        <div class="shrine-title-tag">مسجد مقدس جمکران</div>
+                    </div>
+                    <div class="shrine-vignette sahla-side">
+                        <img src="Faraj/sahla.jpg" alt="مسجد مقدس سهله" onerror="this.style.display='none'">
+                        <div class="shrine-title-tag">مسجد مقدس سهله</div>
+                    </div>
+                </div>
+
+                <!-- بوم متحرک پارتیکل‌های معنوی فیروزه‌ای و طلایی -->
                 <canvas id="faraj-particles-canvas"></canvas>
 
-                <div class="quran-stage-layout" style="position:relative; z-index:2;">
-                    <div class="quran-header-bar">
+                <div class="quran-stage-layout" style="position:relative; z-index:3;">
+                    <div class="quran-header-bar" style="border-bottom-color: rgba(45, 212, 191, 0.35);">
                         <div class="quran-surah-tag"><span style="color: #fde047;">دعای شریف فرج (إِلٰهِى عَظُمَ الْبَلاءُ)</span></div>
-                        <div class="quran-page-tag" style="background: rgba(34, 197, 94, 0.2); border-color: rgba(34, 197, 94, 0.5); color: #4ade80;">تعجیل در فرج امام زمان (عج)</div>
+                        <div class="quran-page-tag" style="background: rgba(14, 116, 144, 0.4); border-color: rgba(45, 212, 191, 0.5); color: #a7f3d0;">تعجیل در فرج امام زمان (عج)</div>
                     </div>
 
                     <div class="teleprompter-viewport">
-                        <div class="fixed-center-frame" style="background: radial-gradient(circle at center, rgba(12, 30, 48, 0.94) 0%, rgba(6, 14, 25, 0.98) 100%); border-color: rgba(74, 222, 128, 0.55); box-shadow: 0 0 55px rgba(0,0,0,0.9), 0 0 35px rgba(34, 197, 94, 0.3);">
+                        <div class="fixed-center-frame faraj-turquoise-frame">
                             <div id="faraj-motion-box" class="verse-motion-wrapper slide-in-up">
                                 <div id="faraj-arabic-content" class="faraj-arabic-large">در حال بارگذاری دعای فرج...</div>
-                                <div id="faraj-trans-drawer" class="stage-translation-drawer active-open" style="border-top-color: rgba(74, 222, 128, 0.35);">
+                                <div id="faraj-trans-drawer" class="stage-translation-drawer active-open" style="border-top-color: rgba(45, 212, 191, 0.35);">
                                     <div id="faraj-persian-content" class="faraj-persian-small"></div>
                                 </div>
                             </div>
@@ -557,11 +617,11 @@
                     </div>
                 </div>
 
-                <div class="floating-bottom-bar" id="faraj-player-bar" style="z-index: 20;">
-                    <button class="nav-btn active" id="faraj-audio-btn" onclick="toggleFarajAudio(event)">▶️ پخش دعای فرج</button>
+                <div class="floating-bottom-bar" id="faraj-player-bar" style="z-index: 20; border-color: rgba(45, 212, 191, 0.5);">
+                    <button class="nav-btn active" id="faraj-audio-btn" onclick="toggleFarajAudio(event)" style="background: #2dd4bf; color: #042f2e;">▶️ پخش دعای فرج</button>
                     <button class="arrow-btn" id="btn-prev-faraj" onclick="jumpFarajVerse(-1, event)" title="فراز قبلی">‹</button>
                     <button class="arrow-btn" id="btn-next-faraj" onclick="jumpFarajVerse(1, event)" title="فراز بعدی">›</button>
-                    <button class="nav-btn small" id="faraj-restart-btn" onclick="restartFarajAudio(event)" style="background: rgba(14, 25, 42, 0.7); border-color: rgba(212, 175, 55, 0.4);">⏮️ از اول</button>
+                    <button class="nav-btn small" id="faraj-restart-btn" onclick="restartFarajAudio(event)" style="background: rgba(14, 25, 42, 0.7); border-color: rgba(45, 212, 191, 0.4);">⏮️ از اول</button>
                 </div>
             </div>
         </div>
@@ -610,16 +670,14 @@
             return n.toString().replace(/\d/g, x => farsiDigits[x]);
         }
 
-        /* ========================================================
-           سیستم پیشروی خودکار و روزانه صفحات قرآن
-        ======================================================== */
+        /* سیستم پیشروی خودکار و روزانه صفحات قرآن */
         function getDailyQuranPage() {
-            const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+            const todayStr = new Date().toISOString().slice(0, 10);
             const savedDate = localStorage.getItem('mosque_quran_date');
             let savedPage = parseInt(localStorage.getItem('mosque_quran_page'), 10);
 
             if (!savedPage || isNaN(savedPage) || savedPage < 1 || savedPage > 604) {
-                savedPage = 1; // شروع اولیه
+                savedPage = 1;
                 localStorage.setItem('mosque_quran_page', savedPage);
                 localStorage.setItem('mosque_quran_date', todayStr);
                 return savedPage;
@@ -631,7 +689,6 @@
                 const diffTime = Math.abs(now - prev);
                 const diffDays = Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
 
-                // هر روز ۱ صفحه خودکار به جلو می‌رود
                 savedPage = ((savedPage - 1 + diffDays) % 604) + 1;
                 localStorage.setItem('mosque_quran_page', savedPage);
                 localStorage.setItem('mosque_quran_date', todayStr);
@@ -679,7 +736,7 @@
             if (targetId !== 'faraj') stopFarajAudio();
 
             if (targetId === 'faraj') {
-                loadFarajDataScript(false); // بدون پخش خودکار
+                loadFarajDataScript(false);
                 initFarajParticles();
             }
         }
@@ -782,7 +839,7 @@
             if (e) e.stopPropagation();
             const inputVal = parseInt(pageInput.value, 10);
             if (!isNaN(inputVal) && inputVal >= 1 && inputVal <= 604) {
-                saveQuranPageProgress(inputVal); // ثبت دستی صفحه به عنوان مرجع
+                saveQuranPageProgress(inputVal);
                 loadPageNumber(inputVal);
             }
             pageInput.blur();
@@ -965,15 +1022,14 @@
             };
         }
 
-        /* انتقال به دعای فرج پس از صدق الله (بدون پخش خودکار) */
         function closeSadaqallahModal() {
             document.getElementById('sadaqallah-modal').style.display = 'none';
             audioPlayer.onended = null;
-            switchSection('faraj'); // انتقال به دعای فرج در حالت آماده‌باش
+            switchSection('faraj');
         }
 
         /* =============================================================
-           بخش دعای فرج: طراحی تمیز، فونت بزرگ و بدون پخش خودکار
+           بخش دعای فرج: پس‌زمینه فیروزه‌ای جمکران، بدون پخش خودکار
         ============================================================= */
         let currentFarajData = {
             title: "دعای شریف فرج",
@@ -1101,8 +1157,8 @@
             }).catch(err => {
                 isPlayingFaraj = false;
                 farajBtn.innerText = "▶️ پخش دعای فرج";
-                farajBtn.style.background = "rgba(212, 175, 55, 0.9)";
-                farajBtn.style.color = "#060b14";
+                farajBtn.style.background = "#2dd4bf";
+                farajBtn.style.color = "#042f2e";
             });
 
             audioPlayer.onended = () => {
@@ -1117,8 +1173,8 @@
                 audioPlayer.pause();
                 isPlayingFaraj = false;
                 farajBtn.innerText = "▶️ پخش دعای فرج";
-                farajBtn.style.background = "rgba(212, 175, 55, 0.9)";
-                farajBtn.style.color = "#060b14";
+                farajBtn.style.background = "#2dd4bf";
+                farajBtn.style.color = "#042f2e";
             }
         }
 
@@ -1139,9 +1195,7 @@
             renderFarajStage(currentFarajIndex, true);
         }
 
-        /* -------------------------------------------------------------
-           سیستم پارتیکل نورانی و معنوی امام زمانی (عج)
-        ------------------------------------------------------------- */
+        /* سیستم پارتیکل نورانی و معنوی امام زمانی (عج) */
         let particleAnimationId = null;
         function initFarajParticles() {
             const canvas = document.getElementById('faraj-particles-canvas');
@@ -1158,18 +1212,18 @@
             });
 
             const particles = [];
-            const particleCount = 48; // بهینه‌شده برای پردازنده تلویزیون
-            const colors = ['rgba(253, 224, 71,', 'rgba(74, 222, 128,', 'rgba(212, 175, 55,', 'rgba(56, 189, 248,'];
+            const particleCount = 50;
+            const colors = ['rgba(45, 212, 191,', 'rgba(253, 224, 71,', 'rgba(56, 189, 248,', 'rgba(94, 234, 212,'];
 
             for (let i = 0; i < particleCount; i++) {
                 particles.push({
                     x: Math.random() * width,
                     y: Math.random() * height,
-                    radius: Math.random() * 2.6 + 1.2,
+                    radius: Math.random() * 2.5 + 1.2,
                     color: colors[Math.floor(Math.random() * colors.length)],
-                    speedY: Math.random() * 0.45 + 0.2, // صعود آرام رو به بالا
+                    speedY: Math.random() * 0.45 + 0.2,
                     speedX: (Math.random() - 0.5) * 0.3,
-                    alpha: Math.random() * 0.6 + 0.2,
+                    alpha: Math.random() * 0.6 + 0.25,
                     fade: (Math.random() * 0.008 + 0.004) * (Math.random() < 0.5 ? 1 : -1)
                 });
             }
@@ -1177,7 +1231,7 @@
             if (particleAnimationId) cancelAnimationFrame(particleAnimationId);
 
             function renderParticles() {
-                if (currentActiveSection !== 'faraj') return; // تنها در صفحه فرج اجرا شود
+                if (currentActiveSection !== 'faraj') return;
                 ctx.clearRect(0, 0, width, height);
 
                 particles.forEach(p => {
@@ -1185,9 +1239,8 @@
                     p.x += p.speedX;
                     p.alpha += p.fade;
 
-                    if (p.alpha <= 0.1 || p.alpha >= 0.8) p.fade = -p.fade;
+                    if (p.alpha <= 0.12 || p.alpha >= 0.85) p.fade = -p.fade;
 
-                    // بازیافت ذرات پس از خروج از بالای تصویر
                     if (p.y < -10) {
                         p.y = height + 10;
                         p.x = Math.random() * width;
@@ -1198,8 +1251,8 @@
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
                     ctx.fillStyle = p.color + p.alpha + ')';
-                    ctx.shadowBlur = 12;
-                    ctx.shadowColor = p.color + '0.8)';
+                    ctx.shadowBlur = 14;
+                    ctx.shadowColor = p.color + '0.9)';
                     ctx.fill();
                 });
 
@@ -1350,7 +1403,7 @@
         });
 
         window.addEventListener('DOMContentLoaded', () => {
-            const todayPage = getDailyQuranPage(); // دریافت صفحه امروز با پیشروی خودکار
+            const todayPage = getDailyQuranPage();
             loadPageNumber(todayPage);
             loadFarajDataScript(false);
             setTimeout(() => {
