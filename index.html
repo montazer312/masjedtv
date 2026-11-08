@@ -126,7 +126,9 @@
         .hadith-side-arrow.right-arrow { right: 26px; }
         .hadith-side-arrow.left-arrow { left: 26px; }
 
-        /* صحنه ثابت تله‌پروامپتر (قرآن و دعای فرج) */
+        /* ========================================================
+           صحنه تله‌پروامپتر (قرآن و دعای فرج)
+        ======================================================== */
         .quran-stage-layout {
             width: 100%; height: 100%; display: flex; flex-direction: column;
             padding: 16px 36px 115px 36px; position: relative;
@@ -146,6 +148,7 @@
             position: relative; width: 100%; overflow: hidden;
         }
 
+        /* کادر با فریم اختصاصی بخش قرآن */
         .fixed-center-frame {
             width: 100%; max-width: 1150px;
             min-height: 250px;
@@ -155,6 +158,15 @@
             box-shadow: 0 0 55px rgba(0, 0, 0, 0.85), 0 0 35px rgba(212, 175, 55, 0.3);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; position: relative; overflow: hidden;
+        }
+
+        /* حالت کاملاً بدون کادر دعای فرج جهت دید کامل جمکران و سهله */
+        .faraj-frameless {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 10px 20px !important;
+            min-height: auto !important;
         }
 
         .verse-motion-wrapper {
@@ -198,28 +210,28 @@
             margin-bottom: 6px; text-shadow: none;
         }
 
-        /* متن عربی فوق‌العاده بزرگ دعای فرج */
+        /* متن عربی بسیار بزرگ و مجلل دعای فرج */
         .faraj-arabic-large {
             font-family: 'Scheherazade New', serif !important;
             font-weight: 700 !important;
-            font-size: 48px !important;
-            line-height: 1.8 !important;
+            font-size: 58px !important;
+            line-height: 1.7 !important;
             color: #fde047 !important;
-            text-shadow: 0 0 25px rgba(253, 224, 71, 0.45) !important;
+            text-shadow: 0 4px 22px rgba(0, 0, 0, 0.95), 0 2px 6px rgba(0, 0, 0, 0.9), 0 0 35px rgba(253, 224, 71, 0.5) !important;
             text-align: center !important;
             width: 100%;
         }
 
-        /* ترجمه فارسی کوچک دعای فرج */
-        .faraj-persian-small {
+        /* ترجمه فارسی بزرگ، درشت و خوانا با خط لاله زار */
+        .faraj-persian-large {
             font-family: 'Lalezar', cursive, sans-serif !important;
-            font-size: 20px !important;
+            font-size: 28px !important;
             line-height: 1.6 !important;
-            color: #d1fae5 !important;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7) !important;
+            color: #ffffff !important;
+            text-shadow: 0 3px 18px rgba(0, 0, 0, 0.95), 0 2px 6px rgba(0, 0, 0, 0.9) !important;
             text-align: center !important;
             width: 100%;
-            opacity: 0.95;
+            opacity: 0.98;
         }
 
         /* نشان مصحف عثمان‌طه فقط در قرآن */
@@ -254,9 +266,11 @@
             text-align: center; width: 100%;
         }
 
-        /* استایل‌های تم فیروزه‌ای جمکران و پرده‌های مسجد سهله و جمکران */
+        /* ========================================================
+           پس‌زمینه بدون کادر دعای فرج با وضوح جمکران و سهله
+        ======================================================== */
         #view-faraj {
-            background: radial-gradient(circle at center, #0e5b6e 0%, #083742 55%, #031c23 100%) !important;
+            background: radial-gradient(circle at center, rgba(14, 91, 110, 0.65) 0%, rgba(8, 55, 66, 0.85) 60%, #031c23 100%) !important;
         }
 
         .shrine-backdrop-wrapper {
@@ -265,45 +279,39 @@
         }
 
         .shrine-vignette {
-            position: absolute; top: 0; bottom: 0; width: 34%;
-            opacity: 0.38; transition: opacity 0.5s ease;
+            position: absolute; top: 0; bottom: 0; width: 44%;
+            opacity: 0.65; transition: opacity 0.5s ease;
         }
         .shrine-vignette img {
             width: 100%; height: 100%; object-fit: cover;
-            filter: contrast(1.1) saturate(1.15);
+            filter: contrast(1.15) saturate(1.2);
         }
         .shrine-vignette.jamkaran-side {
             right: 0;
-            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%);
-            mask-image: linear-gradient(to left, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0) 100%);
         }
         .shrine-vignette.sahla-side {
             left: 0;
-            -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%);
-            mask-image: linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0) 100%);
         }
 
         .shrine-title-tag {
-            position: absolute; bottom: 62px;
-            font-size: 12px; font-weight: 800; color: #a7f3d0;
-            background: rgba(4, 30, 38, 0.7); padding: 3px 12px; border-radius: 12px;
-            border: 1px solid rgba(45, 212, 191, 0.4); backdrop-filter: blur(8px);
+            position: absolute; bottom: 64px;
+            font-size: 13px; font-weight: 800; color: #a7f3d0;
+            background: rgba(3, 28, 35, 0.85); padding: 4px 14px; border-radius: 14px;
+            border: 1px solid rgba(45, 212, 191, 0.6); backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
             letter-spacing: 0.5px;
         }
-        .jamkaran-side .shrine-title-tag { right: 24px; }
-        .sahla-side .shrine-title-tag { left: 24px; }
+        .jamkaran-side .shrine-title-tag { right: 28px; }
+        .sahla-side .shrine-title-tag { left: 28px; }
 
         /* بوم پارتیکل‌های معنوی دعای فرج */
         #faraj-particles-canvas {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 2;
-        }
-
-        /* کادر شیشه‌ای فیروزه‌ای اختصاصی دعای فرج */
-        .faraj-turquoise-frame {
-            background: radial-gradient(circle at center, rgba(8, 62, 75, 0.92) 0%, rgba(3, 29, 36, 0.97) 100%) !important;
-            border: 2px solid rgba(45, 212, 191, 0.65) !important;
-            box-shadow: 0 0 60px rgba(0, 0, 0, 0.95), 0 0 40px rgba(20, 184, 166, 0.4), inset 0 0 35px rgba(45, 212, 191, 0.15) !important;
         }
 
         /* کنترلرهای شناور پایین */
@@ -317,7 +325,6 @@
         }
         .floating-bottom-bar.controls-hidden { transform: translateX(-50%) translateY(140px); opacity: 0; pointer-events: none; }
         
-        /* حالت فعال شدن کیبورد روی گوشی */
         .floating-bottom-bar.input-focused-elevated {
             position: fixed !important;
             border-color: #fde047 !important;
@@ -543,7 +550,7 @@
                 </div>
             </div>
 
-            <!-- ۶. تلاوت قرآن (صحنه ثابت تله‌پروامپتر با نشان آیه عثمان طه) -->
+            <!-- ۶. تلاوت قرآن (ابتدا تلاوت کل صفحه توسط قاری، سپس پخش پیوسته ترجمه) -->
             <div id="view-quran" class="screen-view">
                 <div class="quran-stage-layout">
                     <div class="quran-header-bar">
@@ -565,7 +572,6 @@
                 </div>
 
                 <div class="floating-bottom-bar" id="quran-player-bar">
-                    <!-- کادر تغییر صفحه با جلوگیری کامل از انتقال کلیک به صفحه و پاک‌شدن خودکار -->
                     <div style="display:flex; align-items:center; gap:6px;" 
                          onclick="event.stopPropagation()" 
                          onmousedown="event.stopPropagation()" 
@@ -582,15 +588,16 @@
                         <button class="nav-btn small" id="btn-goto-page" onclick="handlePageChange(event)">برو</button>
                     </div>
 
-                    <button class="nav-btn active" id="play-pause-btn" onclick="handleQuranStep(event)">🔊 ترجمه آیه ۱</button>
+                    <button class="nav-btn active" id="play-pause-btn" onclick="handleQuranStep(event)">⏭️ آیه بعد (کلید OK)</button>
                     <button class="arrow-btn" id="btn-prev-verse" onclick="jumpVerse(-1, event)" title="آیه قبلی">‹</button>
                     <span id="verse-indicator-label" style="color:#d1deee; font-size:12.5px; min-width:70px; text-align:center;">آیه ۱</span>
                     <button class="arrow-btn" id="btn-next-verse" onclick="jumpVerse(1, event)" title="آیه بعدی">›</button>
                 </div>
             </div>
 
-            <!-- ۷. دعای شریف فرج (تم فیروزه‌ای جمکران + تصاویر محو جمکران و سهله در دو طرف) -->
+            <!-- ۷. دعای شریف فرج (کاملاً بدون کادر، وضوح کامل جمکران و سهله، فونت‌های بسیار بزرگ و صوت ملایم) -->
             <div id="view-faraj" class="screen-view">
+                <!-- پرده‌های پس‌زمینه با وضوح بالا از مسجد مقدس جمکران و سهله -->
                 <div class="shrine-backdrop-wrapper">
                     <div class="shrine-vignette jamkaran-side">
                         <img src="Faraj/jamkaran.jpg" alt="مسجد مقدس جمکران" onerror="this.style.display='none'">
@@ -605,17 +612,18 @@
                 <canvas id="faraj-particles-canvas"></canvas>
 
                 <div class="quran-stage-layout" style="position:relative; z-index:3;">
-                    <div class="quran-header-bar" style="border-bottom-color: rgba(45, 212, 191, 0.35);">
+                    <div class="quran-header-bar" style="border-bottom-color: rgba(45, 212, 191, 0.4);">
                         <div class="quran-surah-tag"><span style="color: #fde047;">دعای شریف فرج (إِلٰهِى عَظُمَ الْبَلاءُ)</span></div>
-                        <div class="quran-page-tag" style="background: rgba(14, 116, 144, 0.4); border-color: rgba(45, 212, 191, 0.5); color: #a7f3d0;">تعجیل در فرج امام زمان (عج)</div>
+                        <div class="quran-page-tag" style="background: rgba(14, 116, 144, 0.5); border-color: rgba(45, 212, 191, 0.6); color: #a7f3d0;">🔊 صوت آرام ویژه رعایت حال نمازگزاران</div>
                     </div>
 
+                    <!-- بخش بدون کادر و شفاف دعای فرج -->
                     <div class="teleprompter-viewport">
-                        <div class="fixed-center-frame faraj-turquoise-frame">
+                        <div class="fixed-center-frame faraj-frameless">
                             <div id="faraj-motion-box" class="verse-motion-wrapper slide-in-up">
                                 <div id="faraj-arabic-content" class="faraj-arabic-large">در حال بارگذاری دعای فرج...</div>
-                                <div id="faraj-trans-drawer" class="stage-translation-drawer active-open" style="border-top-color: rgba(45, 212, 191, 0.35);">
-                                    <div id="faraj-persian-content" class="faraj-persian-small"></div>
+                                <div id="faraj-trans-drawer" class="stage-translation-drawer active-open" style="border-top: none !important; margin-top: 10px;">
+                                    <div id="faraj-persian-content" class="faraj-persian-large"></div>
                                 </div>
                             </div>
                         </div>
@@ -623,7 +631,7 @@
                 </div>
 
                 <div class="floating-bottom-bar" id="faraj-player-bar" style="z-index: 20; border-color: rgba(45, 212, 191, 0.5);">
-                    <button class="nav-btn active" id="faraj-audio-btn" onclick="toggleFarajAudio(event)" style="background: #2dd4bf; color: #042f2e;">▶️ پخش دعای فرج</button>
+                    <button class="nav-btn active" id="faraj-audio-btn" onclick="toggleFarajAudio(event)" style="background: #2dd4bf; color: #042f2e;">⏸️ توقف دعای فرج</button>
                     <button class="arrow-btn" id="btn-prev-faraj" onclick="jumpFarajVerse(-1, event)" title="فراز قبلی">‹</button>
                     <button class="arrow-btn" id="btn-next-faraj" onclick="jumpFarajVerse(1, event)" title="فراز بعدی">›</button>
                     <button class="nav-btn small" id="faraj-restart-btn" onclick="restartFarajAudio(event)" style="background: rgba(14, 25, 42, 0.7); border-color: rgba(45, 212, 191, 0.4);">⏮️ از اول</button>
@@ -710,14 +718,12 @@
             localStorage.setItem('mosque_quran_date', todayStr);
         }
 
-        /* رویداد کلیک صفحه اصلی با مسدودسازی کلیک‌های مجازی ناشی از کیبورد */
+        /* رویداد کلیک صفحه با نادیده‌گرفتن رویدادهای کیبورد */
         touchSurface.addEventListener('click', (e) => {
             if (e.target.closest('#quran-player-bar') || e.target.closest('#faraj-player-bar') || e.target.closest('#bottom-nav') || e.target.closest('#sadaqallah-modal') || e.target.closest('.hadith-side-arrow')) return;
             
-            // جلوگیری از کلیک‌های مجازی کیبورد تا ۷۰۰ میلی‌ثانیه پس از لمس کادر
             if (Date.now() - lastInputFocusTime < 700) return;
             
-            // اگر کیبورد باز است، فقط کیبورد را ببندد و آیه را جلو نبرد
             if (document.activeElement && document.activeElement.tagName === 'INPUT') {
                 document.activeElement.blur();
                 return;
@@ -754,24 +760,20 @@
             if (targetId !== 'faraj') stopFarajAudio();
 
             if (targetId === 'faraj') {
-                loadFarajDataScript(false);
+                loadFarajDataScript(true); // پخش خودکار دعای فرج با ولوم آرام
                 initFarajParticles();
             }
         }
 
         /* -------------------------------------------------------------
-           هماهنگی کیبورد اندروید + پاک شدن خودکار عدد قبلی
+           هماهنگی کیبورد اندروید + پاک شدن خودکار عدد
         ------------------------------------------------------------- */
         function handlePageInputFocus(inputEl) {
             lastInputFocusTime = Date.now();
-            
-            // ذخیره عدد قبلی برای بازیابی در صورت انصراف
             const currentVal = parseInt(inputEl.value, 10);
             if (!isNaN(currentVal) && currentVal >= 1 && currentVal <= 604) {
                 lastStoredPageNumber = currentVal;
             }
-            
-            // خالی کردن مستقیم و کامل کادر
             inputEl.value = '';
 
             quranControls.classList.add('input-focused-elevated');
@@ -805,7 +807,6 @@
                 pageInput._alignFn = null;
             }
 
-            // اگر کاربر عددی ننوشت، عدد قبلی برگردد
             const currentVal = parseInt(pageInput.value, 10);
             if (isNaN(currentVal) || currentVal < 1 || currentVal > 604) {
                 pageInput.value = lastStoredPageNumber;
@@ -853,11 +854,13 @@
         }
 
         /* -------------------------------------------------------------
-           بخش تلاوت قرآن (آیه به آیه)
+           بخش تلاوت قرآن:
+           ۱. تلاوت کل صفحه توسط قاری با زدن OK
+           ۲. پخش پیوسته و هماهنگ ترجمه صوتی از آیه اول تا آخر
         ------------------------------------------------------------- */
         let currentQuranData = null;
         let currentVerseIndex = 0;
-        let verseStage = 'arabic';
+        let verseStage = 'qari_recitation';
         let isPlayingVerseAudio = false;
         let transitionTimeout = null;
 
@@ -887,7 +890,7 @@
         function loadPageNumber(pageNum) {
             pauseQuran();
             currentVerseIndex = 0;
-            verseStage = 'arabic';
+            verseStage = 'qari_recitation';
             isPlayingVerseAudio = false;
             lastStoredPageNumber = pageNum;
             pageInput.value = pageNum;
@@ -934,14 +937,15 @@
                 arabicContent.innerHTML = `${verse.arabic} ${osmanBadgeSvg}`;
                 persianContent.innerText = verse.translation;
 
-                if (verseStage === 'arabic') {
+                if (verseStage === 'qari_recitation') {
                     badgeIndicator.className = 'verse-stage-badge badge-arabic-mode';
                     badgeIndicator.innerText = `📖 در حال تلاوت قاری (آیه ${toPersianDigits(verseNum)})`;
                     arabicContent.classList.remove('elevated-mode');
                     transDrawer.classList.remove('active-open');
 
-                    playBtn.innerText = `🔊 ترجمه آیه ${toPersianDigits(verseNum)}`;
-                    playBtn.style.background = "rgba(212, 175, 55, 0.9)";
+                    const isLast = index === currentQuranData.verses.length - 1;
+                    playBtn.innerText = isLast ? `✨ پایان تلاوت قاری و پخش ترجمه` : `⏭️ آیه بعد (کلید OK)`;
+                    playBtn.style.background = isLast ? "#22c55e" : "rgba(212, 175, 55, 0.9)";
                     playBtn.style.color = "#060b14";
                 } else {
                     badgeIndicator.className = 'verse-stage-badge badge-trans-mode';
@@ -949,9 +953,9 @@
                     arabicContent.classList.add('elevated-mode');
                     transDrawer.classList.add('active-open');
 
-                    playBtn.innerText = `⏭️ رد کردن / آیه بعد`;
-                    playBtn.style.background = "#22c55e";
-                    playBtn.style.color = "#060b14";
+                    playBtn.innerText = isPlayingVerseAudio ? `⏸️ توقف ترجمه` : `▶️ ادامه ترجمه`;
+                    playBtn.style.background = isPlayingVerseAudio ? "#ef4444" : "#22c55e";
+                    playBtn.style.color = "#ffffff";
                 }
 
                 document.getElementById('verse-indicator-label').innerText = `آیه ${toPersianDigits(verseNum)}`;
@@ -971,64 +975,60 @@
             }
         }
 
-        function getVerseEndTime(index) {
-            if (!currentQuranData || !currentQuranData.verses) return 999999;
-            const verses = currentQuranData.verses;
-            if (index < verses.length - 1 && verses[index + 1].startTime !== undefined) {
-                return verses[index + 1].startTime;
-            }
-            return audioPlayer.duration && !isNaN(audioPlayer.duration) ? audioPlayer.duration : 999999;
-        }
-
         function handleQuranStep(e) {
             if (e && e.stopPropagation) e.stopPropagation();
             if (!currentQuranData || !currentQuranData.verses) return;
 
-            if (verseStage === 'arabic') {
-                verseStage = 'translation';
-                renderVerseStage(currentVerseIndex, false);
-                playVerseTranslation(currentVerseIndex);
+            if (verseStage === 'qari_recitation') {
+                if (currentVerseIndex < currentQuranData.verses.length - 1) {
+                    currentVerseIndex++;
+                    renderVerseStage(currentVerseIndex, true);
+                } else {
+                    startFullPageTranslation();
+                }
             } else {
-                audioPlayer.pause();
-                isPlayingVerseAudio = false;
-                moveToNextAyah();
+                if (isPlayingVerseAudio) {
+                    audioPlayer.pause();
+                    isPlayingVerseAudio = false;
+                    renderVerseStage(currentVerseIndex, false);
+                } else {
+                    audioPlayer.play().then(() => {
+                        isPlayingVerseAudio = true;
+                        renderVerseStage(currentVerseIndex, false);
+                    }).catch(() => {});
+                }
             }
         }
 
-        function moveToNextAyah() {
-            if (currentVerseIndex < currentQuranData.verses.length - 1) {
-                currentVerseIndex++;
-                verseStage = 'arabic';
-                renderVerseStage(currentVerseIndex, true);
-            } else {
-                triggerSadaqallah();
-            }
-        }
+        function startFullPageTranslation() {
+            verseStage = 'translation_audio';
+            currentVerseIndex = 0;
+            renderVerseStage(0, true);
 
-        function playVerseTranslation(index) {
-            if (!currentQuranData || !currentQuranData.verses || !currentQuranData.verses[index]) return;
-            const verse = currentQuranData.verses[index];
             const audioPath = currentQuranData.audioSrc;
             const absoluteAudioUrl = new URL(audioPath, window.location.href).href;
+
+            audioPlayer.volume = 1.0;
 
             if (audioPlayer.src !== absoluteAudioUrl) {
                 audioPlayer.src = absoluteAudioUrl;
                 audioPlayer.load();
             }
 
-            audioPlayer.currentTime = verse.startTime;
+            audioPlayer.currentTime = 0;
             audioPlayer.play().then(() => {
                 isPlayingVerseAudio = true;
+                renderVerseStage(0, false);
             }).catch(err => {
                 isPlayingVerseAudio = false;
-                console.error("خطا در بارگیری صوت:", err);
+                renderVerseStage(0, false);
+                console.error("خطا در پخش صوت ترجمه:", err);
             });
         }
 
         function pauseQuran() {
             isPlayingVerseAudio = false;
             audioPlayer.pause();
-            verseStage = 'arabic';
             if (currentQuranData && currentQuranData.verses[currentVerseIndex]) {
                 renderVerseStage(currentVerseIndex, false);
             }
@@ -1037,19 +1037,23 @@
         function jumpVerse(direction, e) {
             if (e && e.stopPropagation) e.stopPropagation();
             if (!currentQuranData || !currentQuranData.verses) return;
-            if (isPlayingVerseAudio) {
-                audioPlayer.pause();
-                isPlayingVerseAudio = false;
+
+            if (verseStage === 'qari_recitation') {
+                currentVerseIndex = Math.max(0, Math.min(currentQuranData.verses.length - 1, currentVerseIndex + direction));
+                renderVerseStage(currentVerseIndex, true);
+            } else {
+                currentVerseIndex = Math.max(0, Math.min(currentQuranData.verses.length - 1, currentVerseIndex + direction));
+                const targetTime = currentQuranData.verses[currentVerseIndex].startTime;
+                if (targetTime !== undefined) audioPlayer.currentTime = targetTime;
+                renderVerseStage(currentVerseIndex, true);
             }
-            currentVerseIndex = Math.max(0, Math.min(currentQuranData.verses.length - 1, currentVerseIndex + direction));
-            verseStage = 'arabic';
-            renderVerseStage(currentVerseIndex, true);
         }
 
         function triggerSadaqallah() {
             pauseQuran();
             currentVerseIndex = 0;
 
+            audioPlayer.volume = 1.0;
             audioPlayer.onended = null;
             audioPlayer.src = "Quran/audio/sadaqallah.wav";
             audioPlayer.play().catch(() => {});
@@ -1058,7 +1062,7 @@
             audioPlayer.onended = () => {
                 setTimeout(() => {
                     closeSadaqallahModal();
-                }, 2000);
+                }, 1800);
             };
         }
 
@@ -1069,7 +1073,7 @@
         }
 
         /* =============================================================
-           بخش دعای فرج
+           بخش دعای فرج: کاملاً بدون کادر، فونت بزرگ و صوت آرام (۰.۳۵)
         ============================================================= */
         let currentFarajData = {
             title: "دعای شریف فرج",
@@ -1172,6 +1176,9 @@
             audioPlayer.pause();
             isPlayingVerseAudio = false;
 
+            // ولوم آرام ۰.۳۵ جهت رعایت حال نمازگزاران
+            audioPlayer.volume = 0.35;
+
             const audioPath = (currentFarajData && currentFarajData.audioSrc) || "Quran/audio/faraj.wav";
             const absoluteAudioUrl = new URL(audioPath, window.location.href).href;
 
@@ -1235,7 +1242,7 @@
             renderFarajStage(currentFarajIndex, true);
         }
 
-        /* سیستم پارتیکل نورانی و معنوی امام زمانی (عج) */
+        /* سیستم پارتیکل معنوی امام زمانی (عج) */
         let particleAnimationId = null;
         function initFarajParticles() {
             const canvas = document.getElementById('faraj-particles-canvas');
@@ -1319,13 +1326,23 @@
                 }
             }
 
-            if (currentActiveSection === 'quran' && isPlayingVerseAudio && currentQuranData && currentQuranData.verses) {
-                const endTime = getVerseEndTime(currentVerseIndex);
-                if (currentTime >= endTime - 0.15) {
-                    audioPlayer.pause();
-                    isPlayingVerseAudio = false;
-                    moveToNextAyah();
+            if (currentActiveSection === 'quran' && verseStage === 'translation_audio' && isPlayingVerseAudio && currentQuranData && currentQuranData.verses) {
+                const verses = currentQuranData.verses;
+                for (let i = verses.length - 1; i >= 0; i--) {
+                    if (currentTime >= verses[i].startTime) {
+                        if (currentVerseIndex !== i) {
+                            currentVerseIndex = i;
+                            renderVerseStage(currentVerseIndex, true);
+                        }
+                        break;
+                    }
                 }
+            }
+        };
+
+        audioPlayer.onended = () => {
+            if (currentActiveSection === 'quran' && verseStage === 'translation_audio') {
+                triggerSadaqallah();
             }
         };
 
